@@ -1,0 +1,51 @@
+<h3>Utilization</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>HCPCS Code</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>HCPCS Description</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Service Count</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Beneficiary Count</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Clinician ID</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_2">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_3">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+          <tr class="align-middle">
+            <th scope="row"><%= @utilization.id %></th>
+            <td><%= @utilization.hcpcs_code %></td>
+            <td><%= @utilization.hcpcs_description %></td>
+            <td><%= @utilization.service_count %></td>
+            <td><%= @utilization.beneficiary_count %></td>
+            <td><%= @utilization.clinician_id %></td>
+            <td>
+              <%= button_to "Edit", edit_utilization_path(@utilization), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+              <%= button_to "Delete", utilization_path(@utilization.id), :method => :delete, class: "btn btn-outline-danger", :method => :delete %>
+            </td>
+          </tr>
+    </tbody>
+</table>

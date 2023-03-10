@@ -1,0 +1,197 @@
+<h3>Clinician</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Name</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Primary Speciality</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Medical School</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Graduation Year</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>NPI</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>PAC ID</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_2">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_3">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+      <tr class="align-middle">
+        <th scope="row"><%= @clinician.id %></th>
+        <td>
+          <%= @clinician.first_name %> <%= @clinician.last_name %>
+        </td>
+        <td><%= @clinician.primary_speciality %></td>
+        <td><%= @clinician.medical_school %></td>
+        <td><%= @clinician.graduation_year %></td>
+        <td><%= @clinician.npi %></td>
+        <td><%= @clinician.ind_PAC_ID %></td>
+        <td>
+          <%= button_to "Edit", edit_clinician_path(@clinician), class: "btn btn-outline-secondary", :method => :get %>
+        </td>
+        <td>
+          <%= button_to "Delete", clinician_path(@clinician.id), :method => :delete, class: "btn btn-outline-danger", :method => :delete %>
+        </td>
+      </tr>
+    </tbody>
+</table>
+
+<br>
+<h3>Clinician Utilization Data</h3>
+<p>This is the clinician's utilization data as reported in the CMS's Provider Data Catalog.</p>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>HCPCS Code</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>HCPCS Description</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Service Count</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Beneficiary Count</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_2">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_3">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @utilizations.each do |utilization| %>
+          <tr class="align-middle">
+            <th scope="row"><%= utilization.id %></th>
+            <td><%= utilization.hcpcs_code %></td>
+            <td><%= utilization.hcpcs_description %></td>
+            <td><%= utilization.service_count %></td>
+            <td><%= utilization.beneficiary_count %></td>
+            <td>
+              <%= button_to "View", utilization_path(utilization), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+              <%= button_to "Edit", edit_utilization_path(utilization), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+              <%= button_to "Delete", utilization_path(utilization.id), :method => :delete, class: "btn btn-outline-danger", :method => :delete %>
+            </td>
+          </tr>
+      <% end %>
+    </tbody>
+</table>
+
+<br>
+<h3>Clinician's Organization Info</h3>
+<p>This is the clinician's organization information as reported by the CMS.</p>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-name">
+            <span>Name</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Address</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Phone Number</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Organziation PAC ID</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>Num of Org Members</span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+      <tr class="align-middle">
+        <td><%= link_to @organization.name, organization_path(@organization) %></td>
+        <td>
+          <%= @organization.address_line_one %> 
+          <%= @organization.address_line_two %>
+          <%= @organization.address_city %>
+          <%= @organization.address_state %>
+          <%= @organization.address_zip %>
+        </td>
+        <td><%= @organization.phone_number %></td>
+        <td><%= @organization.org_PAC_ID %></td>
+        <td><%= @organization.num_org_members %></td>
+      </tr>
+    </tbody>
+</table>
+
+<br>
+<h3>Clinician's Facility Affiliations</h3>
+<p>This is the clinician's facility affiliations, which have been expanded to include Long-term Care Hospitals (LTCHs), Skilled Nursing Facilities (SNFs), Inpatient Rehabilitation Facility (IRFs), Home Health Agencies, Hospices, and/or Dialysis Facilities, in addition to hospitals.</p>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-name">
+            <span>Name</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Facility Type</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Address</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>NPI</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>Facility ID</span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+      <% @facilities.each do |facility_id| %>
+        <% @facility = Facility.find(facility_id) %>
+        <tr class="align-middle">
+          <td><%= link_to @facility.name, facility_path(@facility) %></td>
+          <td><%= @facility.facility_type %></td>
+          <td>
+            <%= @facility.address_line_one %> 
+            <%= @facility.address_line_two %>
+            <%= @facility.address_city %>
+            <%= @facility.address_state %>
+            <%= @facility.address_zip_code %>
+          </td>
+          <td><%= @facility.npi %></td>
+          <td><%= @facility.facility_id %></td>
+        </tr>
+      <% end %>
+    </tbody>
+</table>

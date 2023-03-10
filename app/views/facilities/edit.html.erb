@@ -1,0 +1,66 @@
+<h2>Edit Facility</h2>
+
+<br/>
+
+<%= form_with(model: @facility) do |f| %>
+    <div class="row g-3">
+      <div class="col-6">
+        <%= f.label :facility_id, "CMS Facility ID", class: "form-label" %>
+        <%= f.text_field :facility_id, class:"form-control" %>
+      </div>
+      <div class="col-6">
+        <%= f.label :facility_type, "Facility Type", class: "form-label" %>
+        <%= f.text_field :facility_type, class:"form-control" %>
+      </div>
+      <div class="col-12">
+        <%= f.label :name, "Name", class: "form-label" %>
+        <%= f.text_field :name, class:"form-control" %>
+      </div>
+      <div class="col-md-6">
+        <%= f.label :address_line_one, "Street Line 1", class: "form-label" %>
+        <%= f.text_field :address_line_one, class:"form-control" %>
+      </div>
+      <div class="col-md-6">
+        <%= f.label :address_line_two, "Street Line 2", class: "form-label" %>
+        <%= f.text_field :address_line_two, class:"form-control" %>
+      </div>
+    <div class="col-md-4">
+        <%= f.label :address_city, "City", class: "form-label" %>
+        <%= f.text_field :address_city, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :address_state, "State", class: "form-label" %>
+        <%= f.text_field :address_state, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :address_zip_code, "Zip Code", class: "form-label" %>
+        <%= f.text_field :address_zip_code, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :org_PAC_ID, "PAC ID", class: "form-label" %>
+        <%= f.text_field :org_PAC_ID, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :npi, "NPI", class: "form-label" %>
+        <%= f.text_field :npi, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+    <%= f.label :latitude, "Latitude", class: "form-label" %>
+    <%= f.text_field :latitude, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :longitude, "Longitude", class: "form-label" %>
+      <%= f.text_field :longitude, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :clinicians, "Clinicians", class: "form-label" %>
+      <%= f.collection_select(:clinician_ids, Clinician.all, "id", :first_name, {:prompt => "Please Select an option"}, {:multiple => true}) %>
+    </div>
+    <div class="col-2">
+      <%= f.submit "Edit Provider", class: "btn btn-primary" %>
+    </div>
+    <div class="col-2">
+    <%= link_to "Back", '/facilities', class: "btn btn-secondary" %>
+    </div>
+  </div>
+<% end %>

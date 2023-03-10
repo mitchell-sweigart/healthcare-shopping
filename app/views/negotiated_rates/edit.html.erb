@@ -1,0 +1,70 @@
+<h2>Edit Negotiated Rate</h2>
+
+<br/>
+
+<%= form_with(model: @negotiated_rate) do |f| %>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <%= f.label :billing_code_type, "Billing Code Type", class: "form-label" %>
+            <%= f.text_field :billing_code_type, class:"form-control" %>
+         </div>
+        <div class="col-md-4">
+            <%= f.label :billing_code, "Billing Code", class: "form-label" %>
+            <%= f.text_field :billing_code, class:"form-control" %>
+        </div>
+        <div class="col-md-4">
+            <%= f.label :negotiation_arrangement, "Negotiation Arrangement", class: "form-label" %>
+            <%= f.text_field :negotiation_arrangement, class:"form-control" %>
+        </div>
+        <div class="col-md-4">
+            <%= f.label :negotiated_type, "Negotiated Type", class: "form-label" %>
+            <%= f.text_field :negotiated_type, class:"form-control" %>
+        </div>
+        <div class="col-md-4">
+            <%= f.label :negotiated_rate, "Negotiated Rate", class: "form-label" %>
+            <%= f.text_field :negotiated_rate, class:"form-control" %>
+        </div>
+        <div class="col-md-4">
+            <%= f.label :experation_date, "Experation Date", class: "form-label" %>
+            <%= f.text_field :experation_date, class:"form-control" %>
+        </div>
+        <div class="col-md-4">
+            <%= f.label :billing_class, "Billing Class", class: "form-label" %>
+            <%= f.text_field :billing_class, class:"form-control" %>
+        </div>
+        <div class="col-md-4">
+            <%= f.label :service_code, "Service Code", class: "form-label" %>
+            <%= f.text_field :service_code, class:"form-control" %>
+        </div>
+        <div class="col-md-4">
+            <%= f.label :billing_code_modifier, "Billing Code Modifier", class: "form-label" %>
+            <%= f.text_field :billing_code_modifier, class:"form-control" %>
+        </div>
+        <div class="col-md-4">
+            <%= f.label :tin, "TIN", class: "form-label" %>
+            <%= f.text_field :tin, class:"form-control" %>
+        </div>
+        <div class="col-md-4">
+            <%= f.label :tin_type, "TIN Type", class: "form-label" %>
+            <%= f.text_field :tin_type, class: "form-control" %>
+        </div>
+        <div class="col-md-4">
+            <%= f.label :npi, "NPI", class: "form-label" %>
+            <%= f.text_field :npi, class: "form-control" %>
+        </div>
+        <div class="col-md-6">
+            <%= f.label :facility_id, "Facility", class: "form-label" %>
+            <%= select("negotiated_rate", "facility_id", Facility.all.collect {|p| [ p.name, p.id ] }, { :include_blank => true }, class: "form-control") %>
+        </div>
+        <div class="col-md-6">
+            <%= f.label :clinician_id, "Clinician", class: "form-label" %>
+            <%= select("negotiated_rate", "clinician_id", Clinician.all.collect {|p| [ p.first_name, p.id ] }, { :include_blank => true }, class: "form-control") %>
+        </div>
+        <div class="col-2">
+            <%= f.submit "Edit Negotiated Rate", class: "btn btn-primary" %>
+        </div>
+        <div class="col-2">
+            <%= link_to "Back", '/negotiated_rates', class: "btn btn-secondary" %>
+        </div>
+    </div>
+<% end %>

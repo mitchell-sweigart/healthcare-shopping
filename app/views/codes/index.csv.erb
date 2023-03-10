@@ -1,0 +1,4 @@
+<%= CSV.generate_line(["code_id", "code", "description", "plain_language_description","benchmark_cost"]) -%>
+<% @codes.each do |code| %>
+<%= CSV.generate_line([code.id, code.code, code.description, code.plain_language_description, code.benchmark_cost]) -%>
+<% end %>

@@ -1,0 +1,56 @@
+<h3>Negotiated Rate</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Billing Code Type</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Billing Code</span>
+          </th>
+            <th scope="col" id="services-name">
+            <span>Negotiation Arrangement</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>Negotiation Type</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span>Negotiated Rate</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Experation Date</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>NPI</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="align-middle">
+            <th scope="row"><%= @negotiated_rate.id %></th>
+            <td><%= @negotiated_rate.billing_code_type %></td>
+            <td><%= @negotiated_rate.billing_code %></td>
+            <td><%= @negotiated_rate.negotiation_arrangement %></td>
+            <td><%= @negotiated_rate.negotiated_type %></td>
+            <td><%= @negotiated_rate.negotiated_rate %></td>
+            <td><%= @negotiated_rate.experation_date %></td>
+            <td><%= @negotiated_rate.npi %></td>
+            <td>
+                <%= button_to "Edit", edit_negotiated_rate_path(@negotiated_rate), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+                <%= button_to "Delete", negotiated_rate_path(@negotiated_rate), class: "btn btn-outline-danger", method: :delete %>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,33 @@
+<h3>Health  Plan Network</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col" id="ratings-id">
+                <span>ID</span>
+            </th>
+            <th scope="col" id="ratings-name">
+                <span>Name</span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+      <tr class="align-middle">
+        <th scope="row"><%= @health_plan_network.id %></th>
+        <td><%= @health_plan_network.name %></td>
+        <td>
+            <%= button_to "Edit", edit_health_plan_network_path(@health_plan_network), class: "btn btn-outline-secondary", :method => :get  %>
+        </td>
+        <td>
+            <%= button_to "Delete", health_plan_network_path(@health_plan_network), class: "btn btn-outline-danger", method: :delete %>
+        </td>
+      </tr>
+    </tobdy>
+</table>

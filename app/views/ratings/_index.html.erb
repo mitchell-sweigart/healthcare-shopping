@@ -1,0 +1,47 @@
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col" id="ratings-id">
+                <span>ID</span>
+            </th>
+            <th scope="col" id="ratings-name">
+                <span>Measure CD</span>
+            </th>
+            <th scope="col" id="ratings-cpt-hcpcs">
+                <span>Measure Title</span>
+            </th>
+            <th scope="col" id="ratings-gross-charge">
+                <span>Star Value</span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% @ratings.each do |rating| %>
+            <tr class="align-middle">
+                <th scope="row"><%= rating.id %></th>
+                <td><%= rating.measure_cd %></td>
+                <td><%= rating.measure_title %></td>
+                <td><%= rating.star_value %></td>
+                <td>
+                    <%= button_to "View", rating_path(rating), class: "btn btn-outline-secondary", :method => :get  %>
+                </td>
+                <td>
+                    <%= button_to "Edit", edit_rating_path(rating), class: "btn btn-outline-secondary", :method => :get  %>
+                </td>
+                <td>
+                    <%= button_to "Delete", rating_path(rating), class: "btn btn-outline-danger", method: :delete %>
+                </td>
+            </tr>
+        <% end %>
+    </tobdy>
+</table>

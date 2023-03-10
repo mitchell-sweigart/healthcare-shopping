@@ -1,0 +1,20 @@
+<%= CSV.generate_line(["service_id", "gross_charge", "self_pay_cash_price", "aetna_commercial", "aetna_asa", "cbc_commercial", "cigna", "geisinger_commercial", "highmark_choice_blue", "highmark_commercial", "multiplan", "uhc_commercial", "upmc_commercial", "wellspan", "provider_id", "code_id"]) -%>
+<% @services.each do |service| %>
+<%= CSV.generate_line([
+    service.id, 
+    service.gross_charge, 
+    service.self_pay_cash_price, 
+    service.aetna_commercial, 
+    service.aetna_asa, 
+    service.cbc_commercial, 
+    service.cigna, 
+    service.geisinger_commercial, 
+    service.highmark_choice_blue, 
+    service.highmark_commercial, 
+    service.multiplan, 
+    service.uhc_commercial, 
+    service.upmc_commercial, 
+    service.wellspan, 
+    service.facility_id,
+    service.code_id]) %>
+<% end %>

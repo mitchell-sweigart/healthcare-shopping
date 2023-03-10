@@ -1,0 +1,82 @@
+<div class="d-flex flex-row align-items-center justify-content-around">
+  <h1>Organziations: <%= @organizations.count %></h1>
+
+  <%= form_with url: import_organizations_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Import", class: "btn btn-outline-success"  %>
+  <% end %>
+
+  <%= form_with url: bulk_delete_organizations_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Delete", class: "btn btn-outline-danger" %>
+  <% end %>
+
+  <%= button_to "New Organization", new_organization_path, class:"btn btn-primary", :method => :get  %>
+</div>
+
+<br/>
+<br/>
+<br/>
+
+<form class="d-flex" role="search" action="/organizations">
+  <input class="form-control me-2" name="q" type="search" placeholder="Search" aria-label="Search">
+  <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
+
+<br/>
+
+<p style="color: green"><%= notice %></p>
+
+<br/>
+<br/>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Name</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Address</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Organization PAC ID</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>Phone Number</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_2">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_3">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @organizations.each do |organization| %>
+          <tr class="align-middle">
+            <th scope="row"><%= organization.id %></th>
+            <td><%= organization.name %></td>
+            <td><%= organization.address_line_one %> <%= organization.address_line_two %>, <%= organization.address_city %> <%= organization.address_state %> <%= organization.address_zip %></td>
+            <td><%= organization.org_PAC_ID %></td>
+            <td><%= organization.phone_number %></td>
+            <td>
+              <%= button_to "View", organization_path(organization), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+              <%= button_to "Edit", edit_organization_path(organization), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+              <%= button_to "Delete", organization_path(organization.id), :method => :delete, class: "btn btn-outline-danger", :method => :delete %>
+            </td>
+          </tr>
+      <% end %>
+    </tbody>
+</table>

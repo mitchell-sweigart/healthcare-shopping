@@ -1,0 +1,38 @@
+<h2>Edit Timely & Effective Care Rating</h2>
+
+<br/>
+
+<%= form_with(model: @timely_and_effective_care_rating) do |f| %>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= f.label :condition, "Condition", class: "form-label" %>
+      <%= f.text_field :condition, class:"form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :measure_id, "Measure ID", class: "form-label" %>
+      <%= f.text_field :measure_id, class:"form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :measure_name, "Measure Name", class: "form-label" %>
+      <%= f.text_field :measure_name, class:"form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :score, "Score", class: "form-label" %>
+      <%= f.text_field :score, class:"form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :sample, "Sample Size", class: "form-label" %>
+      <%= f.text_field :sample, class:"form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :facility_id, "Facility ID", class: "form-label" %>
+      <%= select("rating", "facility_id", Facility.all.collect {|p| [ p.name, p.id ] }, {}, class: "form-control") %>
+    </div>
+    <div class="col-2">
+      <%= f.submit "Edit rating", class: "btn btn-primary" %>
+    </div>
+    <div class="col-2">
+      <%= link_to "Back", '/ratings', class: "btn btn-secondary" %>
+    </div>
+  </div>
+<% end %>

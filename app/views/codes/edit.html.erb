@@ -1,0 +1,31 @@
+<h2>New Code</h2>
+
+<br/>
+
+<%= form_with(model: @code) do |f| %>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <%= f.label :code, "Code", class: "form-label" %>
+      <%= f.text_field :code, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :description, "Description", class: "form-label" %>
+      <%= f.text_field :description, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :benchmark_cost, "Benchmark Cost", class: "form-label" %>
+      <%= f.text_field :benchmark_cost, class:"form-control" %>
+    </div>
+    <div class="col-md-12">
+      <%= f.label :plain_language_description, "Plain Language Description", class: "form-label" %>
+      <%= f.text_field :plain_language_description, class:"form-control" %>
+    </div>
+
+    <div class="col-md-2">
+      <%= f.submit "Edit Code", class: "btn btn-primary" %>
+    </div>
+    <div class="col-md-2">
+      <%= link_to "Back", '/codes', class: "btn btn-secondary" %>
+    </div>
+  </div>
+<% end %>

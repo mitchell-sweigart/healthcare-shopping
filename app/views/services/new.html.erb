@@ -1,0 +1,72 @@
+<h2>New Service</h2>
+
+<br/>
+
+<%= form_with(model: @service) do |f| %>
+    <div class="row g-3">
+  <div class="col-md-4">
+    <%= f.label :gross_charge, "Gross Charge", class: "form-label" %>
+    <%= f.text_field :gross_charge, class:"form-control" %>
+  </div>
+  <div class="col-md-4">
+    <%= f.label :self_pay_cash_price, "Self Pay/Cash Price", class: "form-label" %>
+    <%= f.text_field :self_pay_cash_price, class:"form-control" %>
+  </div>
+    <div class="col-md-4">
+        <%= f.label :aetna_commercial, "Aetna Comm", class: "form-label" %>
+        <%= f.text_field :aetna_commercial, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :aetna_asa, "Aetna ASA", class: "form-label" %>
+        <%= f.text_field :aetna_asa, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :cigna, "Cigna", class: "form-label" %>
+        <%= f.text_field :cigna, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :highmark_choice_blue, "Highmark Blue Choice", class: "form-label" %>
+        <%= f.text_field :highmark_choice_blue, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :highmark_commercial, "Highmark Comm", class: "form-label" %>
+        <%= f.text_field :highmark_commercial, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :cbc_commercial, "CBC Comm", class: "form-label" %>
+        <%= f.text_field :cbc_commercial, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :geisinger_commercial, "Geisinger Comm", class: "form-label" %>
+        <%= f.text_field :geisinger_commercial, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :uhc_commercial, "UHC Comm", class: "form-label" %>
+        <%= f.text_field :uhc_commercial, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :upmc_commercial, "UPMC Comm", class: "form-label" %>
+        <%= f.text_field :upmc_commercial, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+    <%= f.label :multiplan, "Multiplan", class: "form-label" %>
+    <%= f.text_field :multiplan, class: "form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :wellspan, "Wellspan Comm", class: "form-label" %>
+        <%= f.text_field :wellspan, class: "form-control" %>
+    </div>
+    <div class="col-md-4">
+        <%= f.label :provider_id, "Provider", class: "form-label" %>
+        <%= select("service", "provider_id", Provider.all.collect {|p| [ p.name, p.id ] }, {}, class: "form-control") %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :code_id, "Code", class: "form-label" %>
+      <%= select("service", "code_id", Code.all.collect {|p| [ p.plain_language_description, p.id ] }, {}, class: "form-control") %>
+    </div>
+  <div class="col-12">
+    <%= f.submit "Create Service", class: "btn btn-primary" %>
+  </div>
+  <%= link_to "Back", '/services', class: "" %>
+  </div>
+<% end %>

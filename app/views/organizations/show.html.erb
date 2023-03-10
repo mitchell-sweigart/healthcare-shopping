@@ -1,0 +1,99 @@
+<h3>Organization</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Name</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Address</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Num of Org Members</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>Org PAC ID</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="align-middle">
+            <th scope="row"><%= @organization.id %></th>
+            <td><%= @organization.name %></td>
+            <td><%= @organization.address_line_one %> <%= @organization.address_line_two %>, <%= @organization.address_city %> <%= @organization.address_state %> <%= @organization.address_zip %></td>
+            <td><%= @organization.num_org_members %></td>
+            <td><%= @organization.org_PAC_ID %></td>
+            <td>
+                <%= button_to "Edit", edit_organization_path(@organization), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<br/>
+<br/>
+
+<h3>Clinicians at this Organization</h3>
+<p>A list of the clinicians that practice at this org.</p>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Name</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Specialty</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>NPI</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>Medical School</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+      <% @clinicians.each do |clinician| %>
+        <tr class="align-middle">
+            <th scope="row"><%= clinician.id %></th>
+            <td>
+              <%= clinician.first_name %>
+              <%= clinician.middle_name %>
+              <%= clinician.last_name %>
+              <%= clinician.credential %>
+            </td>
+            <td><%= clinician.primary_speciality %>
+            <td><%= clinician.npi %></td>
+            <td><%= clinician.medical_school %></td>
+            <td>
+              <%= button_to "View", clinician_path(clinician), class: "btn btn-outline-primary", :method => :get %>
+            </td>
+            <td>
+                <%= button_to "Edit", edit_clinician_path(clinician), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+        </tr>
+      <% end %>
+    </tbody>
+</table>
+
+<br/>
+<br/>
+
+<h3>Organizations Ratings</h3>
+<p>Ratings on performance information for Merit-Based Incentive Payment System (MIPS) Quality, Promoting Interoperability, and Improvement Activities performance information submitted by groups.</p>
+
+<%= render "ratings/index" %>

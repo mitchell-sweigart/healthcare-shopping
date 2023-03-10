@@ -1,0 +1,91 @@
+<div class="d-flex flex-row align-items-center justify-content-around">
+  <%= form_with url: import_facilities_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Import", class: "btn btn-outline-success"  %>
+  <% end %>
+
+  <%= form_with url: bulk_import_facilities_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "NPI", class: "btn btn-outline-success"  %>
+  <% end %>
+</div>
+
+<div class="d-flex flex-row align-items-center justify-content-around">
+  <%= form_with url: bulk_delete_facilities_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Delete", class: "btn btn-outline-danger" %>
+  <% end %>
+
+  <%= button_to "New Facility", new_facility_path, class:"btn btn-primary", :method => :get  %>
+</div>
+
+<br/>
+<br/>
+<br/>
+
+<form class="d-flex" role="search" action="/facilities">
+  <input class="form-control me-2" name="q" type="search" placeholder="Search" aria-label="Search">
+  <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
+
+<br/>
+
+<p style="color: green"><%= notice %></p>
+
+<br/>
+<br/>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Name</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Address</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>NPI</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>PAC ID</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>CMS Rating</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_2">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_3">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @facilities.each do |facility| %>
+          <tr class="align-middle">
+            <th scope="row"><%= facility.id %></th>
+            <td><%= facility.name %></td>
+            <td><%= facility.address_line_one %> <%= facility.address_line_two %>, <%= facility.address_city %> <%= facility.address_state %> <%= facility.address_zip_code %></td>
+            <td><%= facility.npi %></td>
+            <td><%= facility.org_PAC_ID %></td>
+            <td><%= facility.overall_rating %></td>
+            <td>
+              <%= button_to "View", facility_path(facility), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+              <%= button_to "Edit", edit_facility_path(facility), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+              <%= button_to "Delete", facility_path(facility.id), :method => :delete, class: "btn btn-outline-danger", :method => :delete %>
+            </td>
+          </tr>
+      <% end %>
+    </tbody>
+</table>

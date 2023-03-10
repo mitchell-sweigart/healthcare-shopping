@@ -1,0 +1,50 @@
+<h2>New Organization</h2>
+
+<br/>
+
+<%= form_with(model: @organization) do |f| %>
+  <div class="row g-3">
+    <div class="col-3">
+      <%= f.label :name, "Name", class: "form-label" %>
+      <%= f.text_field :name, class:"form-control" %>
+    </div>
+    <div class="col-3">
+      <%= f.label :org_PAC_ID, "Org PAC ID", class: "form-label" %>
+      <%= f.text_field :org_PAC_ID, class:"form-control" %>
+    </div>
+    <div class="col-3">
+      <%= f.label :num_org_members, "Num of Organization Members", class: "form-label" %>
+      <%= f.text_field :num_org_members, class:"form-control" %>
+    </div>
+    <div class="col-md-3">
+      <%= f.label :phone_number, "Phone Number", class: "form-label" %>
+      <%= f.text_field :phone_number, class:"form-control" %>
+    </div>
+    <div class="col-md-3">
+      <%= f.label :address_line_one, "Street Line 1", class: "form-label" %>
+      <%= f.text_field :address_line_one, class:"form-control" %>
+    </div>
+    <div class="col-md-3">
+      <%= f.label :address_line_two, "Street Line 2", class: "form-label" %>
+      <%= f.text_field :address_line_two, class:"form-control" %>
+    </div>
+    <div class="col-md-3">
+      <%= f.label :address_city, "City", class: "form-label" %>
+      <%= f.text_field :address_city, class:"form-control" %>
+    </div>
+    <div class="col-md-1">
+      <%= f.label :address_state, "State", class: "form-label" %>
+      <%= f.text_field :address_state, class:"form-control" %>
+    </div>
+    <div class="col-md-2">
+      <%= f.label :address_zip, "Zip Code", class: "form-label" %>
+      <%= f.text_field :address_zip, class:"form-control" %>
+    </div>
+    <div class="col-2">
+      <%= f.submit "Create Organization", class: "btn btn-primary" %>
+    </div>
+    <div class="col-2">
+      <%= link_to "Back", '/organizations', class: "btn btn-secondary" %>
+    </div>
+  </div>
+<% end %>

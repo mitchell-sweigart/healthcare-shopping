@@ -1,0 +1,90 @@
+<div class="d-flex flex-row align-items-center justify-content-around">
+  <%= form_with url: import_codes_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Import", class: "btn btn-outline-success"  %>
+  <% end %>
+
+  <%= form_with url: bulk_update_codes_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Update", class: "btn btn-outline-secondary"  %>
+  <% end %>
+
+  <%= form_with url: bulk_delete_codes_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Delete", class: "btn btn-outline-danger" %>
+  <% end %>
+
+  <%= button_to "New Code", new_code_path, class:"btn btn-primary", :method => :get  %>
+</div>
+
+<br/>
+<br/>
+
+<%= form_with url: "/codes", class: "row g-3", method: :get do |form| %>
+    <div class="col-md-3">
+        <%= form.text_field :query, placeholder: "Code", class: "form-control" %>
+    </div>
+
+    <div class="col-md-3">
+        <%= form.text_field :query_2, placeholder: "Description", class: "form-control" %>
+    </div>
+
+    <div class="col-md-3">
+        <%= form.text_field :query_3, placeholder: "Plain Language Description", class: "form-control" %>
+    </div>
+
+    <div class="col-md-1">
+        <%= form.submit "Search", class: "btn btn-outline-success" %>
+    </div>
+
+    <div class="col-md-2">
+        <%= link_to "Download as CSV", codes_path(format: :csv), download: ["Codes", Date.today].join(" "), class: "btn btn-outline-secondary"  %>
+    </div>
+<% end %>
+
+<br/>
+
+<p style="color: green"><%= notice %></p>
+
+<br/>
+<br/>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col" id="codes-id">
+                <span>ID</span>
+            </th>
+            <th scope="col" id="codes-code">
+                <span>Code</span>
+            </th>
+            <th scope="col" id="codes-description">
+                <span>Description</span>
+            </th>
+            <th scope="col" id="codes-plain-language-description">
+                <span>Plain Language Description</span>
+            </th>
+            <th scope="col" id="codes-benchmark-cost">
+                <span>Benchmark Cost</span>
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% @codes.each do |code| %>
+            <tr class="align-middle">
+                <th scope="row"><%= code.id %></th>
+                <td><%= link_to "#{code.code}", code_path(code) %></td>
+                <td><%= code.description %></td>
+                <td><%= code.plain_language_description %></td>
+                <td><%= number_to_currency(code.benchmark_cost, :unit => "$") %></td>
+            </tr>
+        <% end %>
+    </tobdy>
+</table>
+
+
+<script>
+    e = document.getElementById("carrier-dropdown")
+    value = e.value
+</script>

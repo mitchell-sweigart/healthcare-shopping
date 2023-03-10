@@ -1,0 +1,115 @@
+<div class="d-flex flex-row align-items-center justify-content-around">
+  <h1>Services: <%= @services.count %></h1>
+
+  <%= form_with url: import_services_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Import", class: "btn btn-outline-success"  %>
+  <% end %>
+
+  <%= form_with url: bulk_delete_services_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Delete", class: "btn btn-outline-danger" %>
+  <% end %>
+
+  <%= button_to "New Service", new_service_path, class:"btn btn-primary", :method => :get  %>
+</div>
+
+<br/>
+
+<%= form_with url: "/services", class: "row g-3", method: :get do |form| %>
+    <div class="col-md-2">
+        <%= form.text_field :query, placeholder: "CPT/HCPCS", class: "form-control" %>
+    </div>
+
+    <div class="col-md-2">
+        <%= form.text_field :query_2, placeholder: "Description", class: "form-control" %>
+    </div>
+
+    <div class="col-md-3">
+        <%= form.select :query_3, Code.all.collect { |c| [ c.plain_language_description, c.plain_language_description ] }, {}, class: "form-select" %>
+    </div>
+
+    <div class="col-md-2">
+        <%= form.select :query_4, HealthPlanNetwork.all.collect { |hpn| [ hpn.name, hpn.name ] }, {}, class: "form-select" %>
+    </div>
+
+    <div class="col-md-2">
+        <%= form.select :query_5, options_for_select([['Cash Price: $ - $$$', 1], ['Cash Price: $$$ - $', 2]]) { |hpn| [ hpn[0], hpn[0] ] }, {}, class: "form-select" %>
+    </div>
+
+    <div class="col-md-1">
+        <%= form.submit "Search", class: "btn btn-outline-success" %>
+    </div>
+    <div class="col-md-2">
+        <%= link_to "Download as CSV", services_path(format: :csv), download: ["Services", Date.today].join(" "), class: "btn btn-outline-secondary" %>
+    </div>  
+<% end %>
+
+<p style="color: green"><%= notice %></p>
+
+<% array = [] %>
+<% def median(array) %>
+    <% return nil if array.empty? %>
+    <% sorted = array.sort %>
+    <% len = sorted.length %>
+    <% (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0 %>
+<% end %>
+
+<% @services.each do |service| %>
+    <% array.append(service.insurance_rate(@insurance_carrier)) %>
+    <div class="card lh-base my-3">
+        <div class="card-header">
+            <div class="fs-6"><%= "CPT/HCPCS: #{service.code.code}" %></div>
+            <% if service.code.plain_language_description == "No Plain Language Description" %>
+            <div class="fs-6 fw-semibold"><%= "#{service.code.description}" %></div>
+            <% else %>
+            <div class="fs-6 fw-semibold"><%= "#{service.code.description} (#{service.code.plain_language_description})" %></div>
+            <% end %>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card-title"><%= link_to "#{service.facility.name}", facility_path(service.facility) %></div>
+                    <p class="card-text"><%= "#{service.facility.address_line_one} #{service.facility.address_city} #{service.facility.address_state} #{service.facility.address_zip_code}" %></p>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-title fs-6">CMS Rating</div>
+                    <p class="card-text strong fs-4"><%= "#{service.facility.overall_rating}" %></p>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-title fs-6">Cash Price</div>
+                    <p class="card-text strong fs-4"><%= number_to_currency(service.self_pay_cash_price, :unit => "$") %></p>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-title fs-6">Insurance Rate</div>
+                    <p class="card-text strong fs-4"><%= number_to_currency(service.insurance_rate(@insurance_carrier), :unit => "$") %></p>
+                </div>
+                <div class="col-md-2">
+                    <%= button_to "Learn More", service_path(service), class: "btn btn-primary", method: :get %>
+                </div>
+            </div>
+            </br>
+            <div class="row">
+                <div class="col-md-8">
+                    <% premium_credit_lanc_benchmark = @benchmark - service.insurance_rate(@insurance_carrier) %>
+                        <div class="card-title fs-6">Savvy Shopper Reward</div>
+                    <% if service.insurance_rate(@insurance_carrier) == 0.00 %>
+                        <p class="card-text strong fs-4 text-danger">This provider isnt eligible for out-of-pocket credit</p>
+                    <% elsif service.insurance_rate(@insurance_carrier) > @benchmark %>
+                        <p class="card-text strong fs-4 text-danger">This provider charges more than the reward-eligible rate for this service.</p> 
+                    <% else %>
+                        <p class="card-text strong fs-4 text-success"><%# "#{number_to_currency(premium_credit_lanc_benchmark, :unit => "$")} (Lanc Median)" %></p>
+                    <% end %>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-title fs-6">Lanc Benchmark</div>
+                    <p class="card-text strong fs-4"><%= number_to_currency(@benchmark, :unit => "$")} %></p> 
+                </div>
+                <div class="col-md-2">
+                    <div class="card-title fs-6">Benchmark Rate</div>
+                    <p class="card-text strong fs-4"><%= number_to_currency(service.code.benchmark_cost, :unit => "$") %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+<% end %>

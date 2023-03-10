@@ -1,0 +1,56 @@
+<h3>Service</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Name</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>CPT/HCPCS</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Gross Charge</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>Self Pay/Cash Price</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span>Aetna Comm.</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Aetna ASA</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>CBC Commercial</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="align-middle">
+            <th scope="row"><%= @service.id %></th>
+            <td><%= @service.code.code %></td>
+            <td><%= @service.code.plain_language_description %></td>
+            <td><%= @service.gross_charge %></td>
+            <td><%= @service.self_pay_cash_price %></td>
+            <td><%= @service.aetna_commercial %></td>
+            <td><%= @service.aetna_asa %></td>
+            <td><%= @service.cbc_commercial %></td>
+            <td>
+                <%= button_to "Edit", edit_service_path(@service), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+                <%= button_to "Delete", service_path(@service), class: "btn btn-outline-danger", method: :delete %>
+            </td>
+        </tr>
+    </tbody>
+</table>

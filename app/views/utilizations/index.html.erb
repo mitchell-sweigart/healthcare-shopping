@@ -1,0 +1,86 @@
+<div class="d-flex flex-row align-items-center justify-content-around">
+  <h1>Utilizations: <%= @utilizations.count %></h1>
+
+  <%= form_with url: import_utilizations_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Import", class: "btn btn-outline-success"  %>
+  <% end %>
+
+  <%= form_with url: bulk_delete_utilizations_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Delete", class: "btn btn-outline-danger" %>
+  <% end %>
+
+  <%= button_to "New Utilization", new_utilization_path, class:"btn btn-primary", :method => :get  %>
+</div>
+
+<br/>
+<br/>
+<br/>
+
+<form class="d-flex" role="search" action="/utilizations">
+  <input class="form-control me-2" name="q" type="search" placeholder="Search" aria-label="Search">
+  <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
+
+<br/>
+
+<p style="color: green"><%= notice %></p>
+
+<br/>
+<br/>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>HCPCS Code</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>HCPCS Description</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Service Count</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Beneficiary Count</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Clinician ID</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_2">
+            <span></span>
+          </th>
+          <th scope="col" id="services-action_3">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @utilizations.each do |utilization| %>
+          <tr class="align-middle">
+            <th scope="row"><%= utilization.id %></th>
+            <td><%= utilization.hcpcs_code %></td>
+            <td><%= utilization.hcpcs_description %></td>
+            <td><%= utilization.service_count %></td>
+            <td><%= utilization.beneficiary_count %></td>
+            <td><%= utilization.clinician_id %></td>
+            <td>
+              <%= button_to "View", utilization_path(utilization), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+              <%= button_to "Edit", edit_utilization_path(utilization), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+            <td>
+              <%= button_to "Delete", utilization_path(utilization.id), :method => :delete, class: "btn btn-outline-danger", :method => :delete %>
+            </td>
+          </tr>
+      <% end %>
+    </tbody>
+</table>

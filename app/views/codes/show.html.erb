@@ -1,0 +1,40 @@
+<h3>Code</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="codes-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="codes-code">
+            <span>Code</span>
+          </th>
+          <th scope="col" id="codes-description">
+            <span>Description</span>
+          </th>
+          <th scope="col" id="codes-plain-language-description">
+            <span>Plain Language Description</span>
+          </th>
+          <th scope="col" id="codes-action">
+            <span></span>
+          </th>
+          <th scope="col" id="codes-action">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="align-middle">
+          <th scope="row"><%= @code.id %></th>
+          <td><%= @code.code %></td>
+          <td><%= @code.description %></td>
+          <td><%= @code.plain_language_description %></td>
+          <td>
+            <%= button_to "Edit", edit_code_path(@code), class: "btn btn-outline-secondary", :method => :get %>
+          </td>
+          <td>
+            <%= button_to "Delete", code_path(@code), class: "btn btn-outline-danger", method: :delete %>
+          </td>
+        </tr>
+    </tbody>
+</table>

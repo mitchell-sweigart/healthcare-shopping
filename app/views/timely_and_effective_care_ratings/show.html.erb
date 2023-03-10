@@ -1,0 +1,56 @@
+<h3>Rating</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col" id="ratings-id">
+                <span>ID</span>
+            </th>
+            <th scope="col" id="ratings-name">
+                <span>Condition</span>
+            </th>
+            <th scope="col" id="ratings-cpt-hcpcs">
+                <span>Measure ID</span>
+            </th>
+            <th scope="col" id="ratings-gross-charge">
+                <span>Measure Name</span>
+            </th>
+            <th scope="col" id="ratings-provider-name">
+                <span>Score</span>
+            </th>
+            <th scope="col" id="ratings-provider-name">
+                <span>Sample Size</span>
+            </th>
+            <th scope="col" id="ratings-provider-name">
+                <span>Facility ID</span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+      <tr class="align-middle">
+        <th scope="row"><%= @timely_and_effective_care_rating.id %></th>
+        <td><%= @timely_and_effective_care_rating.condition %></td>
+        <td><%= @timely_and_effective_care_rating.measure_id %></td>
+        <td><%= @timely_and_effective_care_rating.measure_name %></td>
+        <td><%= @timely_and_effective_care_rating.score %></td>
+        <td><%= @timely_and_effective_care_rating.sample %></td>
+        <td><%= @timely_and_effective_care_rating.facility_id %></td>
+        <td>
+            <%= button_to "Edit", edit_timely_and_effective_care_rating_path(@timely_and_effective_care_rating), class: "btn btn-outline-secondary", :method => :get  %>
+        </td>
+        <td>
+            <%= button_to "Delete", timely_and_effective_care_rating_path(@timely_and_effective_care_rating), class: "btn btn-outline-danger", method: :delete %>
+        </td>
+      </tr>
+    </tobdy>
+</table>

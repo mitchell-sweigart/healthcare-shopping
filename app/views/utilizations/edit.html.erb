@@ -1,0 +1,34 @@
+<h2>Edit Utilization</h2>
+
+<br/>
+
+<%= form_with(model: @utilization) do |f| %>
+  <div class="row g-3">
+    <div class="col-6">
+      <%= f.label :hcpcs_code, "HCPCS Code", class: "form-label" %>
+      <%= f.text_field :hcpcs_code, class:"form-control" %>
+    </div>
+    <div class="col-6">
+      <%= f.label :hcpcs_description, "HCPCS Description", class: "form-label" %>
+      <%= f.text_field :hcpcs_description, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :service_count, "Service Count", class: "form-label" %>
+      <%= f.text_field :service_count, class:"form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :beneficiary_count, "Beneficiary Count", class: "form-label" %>
+      <%= f.text_field :beneficiary_count, class:"form-control" %>
+    </div>
+    <div class="col-4">
+      <%= f.label :clinician_id, "Clinician ID", class: "form-label" %>
+      <%= f.text_field :clinician_id, class:"form-control" %>
+    </div>
+    <div class="col-2">
+      <%= f.submit "Edit Utilization", class: "btn btn-primary" %>
+    </div>
+    <div class="col-2">
+      <%= link_to "Back", '/utilizations', class: "btn btn-secondary" %>
+    </div>
+  </div>
+<% end %>

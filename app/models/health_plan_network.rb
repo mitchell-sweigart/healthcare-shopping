@@ -1,0 +1,2 @@
+class HealthPlanNetwork < ApplicationRecord
+end

@@ -1,0 +1,188 @@
+<h3>Facility</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Name</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Address</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>NPI</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>PAC ID</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="align-middle">
+            <th scope="row"><%= @facility.id %></th>
+            <td><%= @facility.name %></td>
+            <td><%= @facility.address_line_one %> <%= @facility.address_line_two %>, <%= @facility.address_city %> <%= @facility.address_state %> <%= @facility.address_zip_code %></td>
+            <td><%= @facility.npi %></td>
+            <td><%= @facility.org_PAC_ID %></td>
+            <td>
+                <%= button_to "Edit", edit_facility_path(@facility), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<br/>
+<br/>
+
+<h3>Associated Clinicians</h3>
+<p>A list of the Clinicians that are associated/do procedures at this facility</p>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-id">
+            <span>ID</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Name</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Specialty</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Medical School</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>Gratuation Year</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span></span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @facility.clinician_ids.each do |clinician_id| %>
+          <% @clinician = Clinician.find(clinician_id) %>
+          <tr class="align-middle">
+            <th scope="row"><%= @clinician.id %></th>
+            <td><%= link_to "#{@clinician.first_name} #{@clinician.middle_name} #{@clinician.last_name} #{@clinician.credential}", clinician_path(@clinician) %></td>
+            <td><%= @clinician.primary_speciality %>
+            <td><%= @clinician.medical_school %></td>
+            <td><%= @clinician.graduation_year %></td>
+            <td>
+                <%= button_to "Edit", edit_clinician_path(@clinician), class: "btn btn-outline-secondary", :method => :get %>
+            </td>
+          </tr>
+        <% end %>
+    </tbody>
+</table>
+
+<br/>
+
+<h3>Timely & Effective Care Ratings</h3>
+<p>This data shows measures of cataract surgery outcome, colonoscopy follow-up, heart attack care, emergency department care, preventive care, and pregnancy and delivery care.</p>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col" id="ratings-name">
+                <span>Condition</span>
+            </th>
+            <th scope="col" id="ratings-cpt-hcpcs">
+                <span>Measure ID</span>
+            </th>
+            <th scope="col" id="ratings-gross-charge">
+                <span>Measure Name</span>
+            </th>
+            <th scope="col" id="ratings-provider-name">
+                <span>Score</span>
+            </th>
+            <th scope="col" id="ratings-provider-name">
+                <span>Sample Size</span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+            <th scope="col" id="ratings-actions">
+                <span></span>
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% @timely_and_effective_care_ratings.each do |timely_and_effective_care_rating| %>
+            <tr class="align-middle">
+                <td><%= timely_and_effective_care_rating.condition %></td>
+                <td><%= timely_and_effective_care_rating.measure_id %></td>
+                <td><%= timely_and_effective_care_rating.measure_name %></td>
+                <td><%= timely_and_effective_care_rating.score %></td>
+                <td><%= timely_and_effective_care_rating.sample %></td>
+                <td>
+                    <%= button_to "Edit", edit_timely_and_effective_care_rating_path(timely_and_effective_care_rating), class: "btn btn-outline-secondary", :method => :get  %>
+                </td>
+                <td>
+                    <%= button_to "Delete", timely_and_effective_care_rating_path(timely_and_effective_care_rating), class: "btn btn-outline-danger", method: :delete %>
+                </td>
+            </tr>
+        <% end %>
+    </tobdy>
+</table>
+
+<br/>
+<br/>
+
+<h3>Services</h3>
+<p>This data shows each of the 500 shoppable services available at this facility and their associated costs.</p>
+<br/>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col" id="services-name">
+            <span>CPT/HCPCS</span>
+          </th>
+          <th scope="col" id="services-name">
+            <span>Description</span>
+          </th>
+          <th scope="col" id="services-cpt-hcpcs">
+            <span>Gross Charge</span>
+          </th>
+          <th scope="col" id="services-gross-charge">
+            <span>Self Pay/Cash Price</span>
+          </th>
+          <th scope="col" id="services-action">
+            <span>CBC Commercial</span>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+      <% @services.each do |service| %>
+          <tr class="align-middle">
+              <td><%= service.code.code %></td>
+              <td><%= service.code.plain_language_description %></td>
+              <td><%= service.gross_charge %></td>
+              <td><%= service.self_pay_cash_price %></td>
+              <td><%= service.cbc_commercial %></td>
+              <td>
+              <%= button_to "Delete", service_path(service), class: "btn btn-outline-danger", method: :delete %>
+              </td>
+          </tr>
+      <% end %>
+    </tbody>
+</table>
+
+<br/>
+<br/>
+
+<h3>Ratings</h3>
+
+<%= render "ratings/index" %>

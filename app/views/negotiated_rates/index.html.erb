@@ -1,0 +1,89 @@
+<div class="d-flex flex-row align-items-center justify-content-around">
+  <%= form_with url: import_negotiated_rates_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Import", class: "btn btn-outline-success"  %>
+  <% end %>
+
+  <%= form_with url: bulk_delete_negotiated_rates_path, class: "d-flex", method: :post do |form| %>
+    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
+    <%= form.button "Delete", class: "btn btn-outline-danger" %>
+  <% end %>
+
+  <%= button_to "New Negotiated Rate", new_negotiated_rate_path, class:"btn btn-primary", :method => :get  %>
+</div>
+
+<br/>
+
+<%= form_with url: "/negotiated_rates", class: "row g-3", method: :get do |form| %>
+    <div class="col-md-2">
+        <%= form.text_field :query, placeholder: "CPT/HCPCS", class: "form-control" %>
+    </div>
+
+    <div class="col-md-2">
+        <%= form.select :query_5, options_for_select([['Cash Price: $ - $$$', 1], ['Cash Price: $$$ - $', 2]]) { |hpn| [ hpn[0], hpn[0] ] }, {}, class: "form-select" %>
+    </div>
+
+    <div class="col-md-1">
+        <%= form.submit "Search", class: "btn btn-outline-success" %>
+    </div>
+    <div class="col-md-2">
+        <%= link_to "Download as CSV", negotiated_rates_path(format: :csv), download: ["Negotiated Rates", Date.today].join(" "), class: "btn btn-outline-secondary" %>
+    </div>  
+<% end %>
+
+<p style="color: green"><%= notice %></p>
+
+<% @negotiated_rates.each do |negotiated_rate| %>
+    <div class="card lh-base my-3">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-10 fs-6">
+                    <%= "#{negotiated_rate.billing_code_type}: #{negotiated_rate.billing_code}" %>
+                </div>
+                <div class="col-md-2">
+                    <%= button_to "Learn More", negotiated_rate_path(negotiated_rate), class: "btn btn-primary", method: :get %>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card-title"><%= link_to "#{negotiated_rate.facility.name}", facility_path(negotiated_rate.facility) %></div>
+                    <p class="card-text"><%= "#{negotiated_rate.facility.address}" %></p>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-title">Negotiated Rate</div>
+                    <p class="card-text"><%= number_to_currency(negotiated_rate.negotiated_rate, :unit => "$") %></p>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-title">Negotiated Type</div>
+                    <p class="card-text"><%= "#{negotiated_rate.negotiated_type}" %></p>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-title">Negotiation Arrangement</div>
+                    <p class="card-text"><%= "#{negotiated_rate.negotiation_arrangement}" %></p>
+                </div>
+            </div>
+            </br>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="card-title">NPI</div>
+                    <p class="card-text"><%= "#{negotiated_rate.npi}" %></p>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-title"><%= "Tin Type: #{negotiated_rate.tin_type}" %></div>
+                    <p class="card-text"><%= "#{negotiated_rate.tin}" %></p>
+                </div>
+                <div class="col-md-4">
+                    <p class="card-text"><%= "Experation Date: #{negotiated_rate.experation_date}"  %></p>
+                    <p class="card-text"><%= "Billing Class: #{negotiated_rate.billing_class}"  %></p>
+                </div>
+                <div class="col-md-4">
+                    <p class="card-text"><%= "Service Code: #{negotiated_rate.service_code}"  %></p>
+                    <p class="card-text"><%= "Billing Code Modifier: #{negotiated_rate.billing_code_modifier}"  %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+<% end %>
