@@ -1,4 +1,4 @@
-# README
+# Helathcare Shopping App
 
 This README would normally document whatever steps are necessary to get the
 application up and running.
@@ -6,7 +6,7 @@ application up and running.
 Things you may want to cover:
 
 * Ruby version
-
+    #I'm not sure!
 * System dependencies
 
 * Configuration
@@ -22,3 +22,6 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+
+Hello this is mitchell sweigart!

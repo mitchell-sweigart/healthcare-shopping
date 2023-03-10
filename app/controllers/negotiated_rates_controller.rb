@@ -5,6 +5,8 @@ class NegotiatedRatesController < ApplicationController
         @insurance_carrier = params[:query_4]
         sort_order = params[:query_5]
         @negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "%#{params[:query]}%")
+
+        @city = request.location.city
     end
 
     def new
