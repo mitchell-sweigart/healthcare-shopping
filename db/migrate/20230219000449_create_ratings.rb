@@ -4,7 +4,7 @@ class CreateRatings < ActiveRecord::Migration[7.0]
       t.string :measure_cd
       t.string :measure_title
       t.integer :star_value
-      t.integer :provider_id
+      t.integer :facility_id
 
       t.timestamps
     end
