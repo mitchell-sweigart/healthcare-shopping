@@ -64,11 +64,11 @@
         <%= f.label :code_id, "Code", class: "form-label" %>
         <%= select("service", "code_id", Code.all.collect { |p| [ p.code, p.id ] }, {}, class: "form-control") %>
     </div>
-  <div class="col-md-2">
-    <%= f.submit "Edit Service", class: "btn btn-primary" %>
-  </div>
-  <div class="col-md-2">
-<%= link_to "Back", service_path(@service), class: "btn btn-secondary", :method => :get %>
-</div>
+    <div class="col-md-2">
+        <%= f.submit "Edit Service", class: "btn btn-primary" %>
+    </div>
+    <div class="col-md-2">
+        <%= link_to "Back", service_path(@service), class: "btn btn-secondary", :method => :get %>
+    </div>
   </div>
 <% end %>

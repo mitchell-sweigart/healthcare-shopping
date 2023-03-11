@@ -16,7 +16,8 @@ class CreateService < ActiveRecord::Migration[7.0]
       t.decimal :uhc_commercial
       t.decimal :upmc_commercial
       t.decimal :wellspan
-
+      t.integer :facility_id
+      
       t.timestamps
     end
   end
