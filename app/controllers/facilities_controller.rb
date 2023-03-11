@@ -15,9 +15,8 @@ class FacilitiesController < ApplicationController
             google_maps_direction_api = "https://maps.googleapis.com/maps/api/directions/json?origin=#{@latitude},#{@longitude}&destination=40.4612819,-79.9461137&key=AIzaSyDSL85vkykDd8e2g7Z5mzd-zJvf779k0dM"
             direction_data_raw = URI.open(google_maps_direction_api).read
             direction_data_hash = JSON.parse(direction_data_raw)
-            
+
             @distance = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
-            end
         end
     end
 
