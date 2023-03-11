@@ -26,6 +26,11 @@ class FacilitiesController < ApplicationController
                     @facilities_with_distance.push({facility: facility, distance: nil})
                 end
             end
+        else
+            @facilities_with_distance = []
+            @facilities.each do |facility|
+                @facilities_with_distance.push({facility: facility, distance: nil})
+            end
         end
     end
 

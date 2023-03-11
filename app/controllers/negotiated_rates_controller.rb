@@ -6,7 +6,30 @@ class NegotiatedRatesController < ApplicationController
         sort_order = params[:query_5]
         @negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "%#{params[:query]}%")
 
-        @city = request.location.city
+        if Rails.env.production?
+            @latitude = request.location.latitude
+            @longitude = request.location.longitude
+            @negotiated_rates_with_distance = []
+            @negotiated_rates.each do |negotiated_rate|
+                if negotiated_rate.facility.latitude != nil
+                    facility_lat = negotiated_rate.facility.latitude
+                    facility_lon = negotiated_rate.facility.longitude
+                    google_maps_direction_api = "https://maps.googleapis.com/maps/api/directions/json?origin=#{@latitude},#{@longitude}&destination=#{facility_lat},#{facility_lon}&key=AIzaSyDSL85vkykDd8e2g7Z5mzd-zJvf779k0dM"
+                    direction_data_raw = URI.open(google_maps_direction_api).read
+                    direction_data_hash = JSON.parse(direction_data_raw)
+                    distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
+
+                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
+                else
+                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: nil})
+                end
+            end
+        else
+            @negotiated_rates_with_distance = []
+            @negotiated_rates.each do |negotiated_rate|
+                @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: nil})
+            end
+        end
     end
 
     def new
@@ -53,7 +76,8 @@ class NegotiatedRatesController < ApplicationController
             :tin_type,
             :npi,
             :facility_id,
-            :clinician_id
+            :clinician_id,
+            :code_id
             ))
             flash.notice = "Negotiated Rate successfully updated!"
             redirect_to '/negotiated_rates'
@@ -83,6 +107,10 @@ class NegotiatedRatesController < ApplicationController
             negotiated_rate_hash[:tin] = row["tin"]
             negotiated_rate_hash[:tin_type] = row["tin_type"]
             negotiated_rate_hash[:npi] = row["npi"]
+
+            code = Code.find_by(code: row["billing_code"])
+
+            negotiated_rate_hash[:code_id] = code.id
 
             facility = Facility.find_by(npi: row["npi"])
             clinician = Clinician.find_by(npi: row["npi"])
@@ -128,7 +156,8 @@ class NegotiatedRatesController < ApplicationController
             :tin_type,
             :npi,
             :facility_id,
-            :clinician_id
+            :clinician_id,
+            :code_id
             )
     end  
 end
