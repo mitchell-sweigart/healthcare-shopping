@@ -1,8 +1,6 @@
 class CreateService < ActiveRecord::Migration[7.0]
   def change
     create_table :services do |t|
-      t.string :name
-      t.string :cpt_hcpcs
       t.decimal :gross_charge
       t.decimal :self_pay_cash_price
       t.decimal :aetna_commercial
@@ -17,7 +15,8 @@ class CreateService < ActiveRecord::Migration[7.0]
       t.decimal :upmc_commercial
       t.decimal :wellspan
       t.integer :facility_id
-      
+      t.integer :code_id
+
       t.timestamps
     end
   end
