@@ -79,7 +79,7 @@
             <td><%= facility.name %></td>
             <td><%= facility.address_line_one %> <%= facility.address_line_two %>, <%= facility.address_city %> <%= facility.address_state %> <%= facility.address_zip_code %></td>
             <td><%= facility.npi %></td>
-            <td><%= facility['distance'] %></td>
+            <td><%= facility.distance %></td>
             <td><%= facility.overall_rating %></td>
             <td>
               <%= button_to "View", facility_path(facility), class: "btn btn-outline-secondary", :method => :get %>
