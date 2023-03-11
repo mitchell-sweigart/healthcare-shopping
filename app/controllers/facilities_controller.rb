@@ -23,7 +23,7 @@ class FacilitiesController < ApplicationController
 
                     @facilities_with_distance.push({facility: facility, distance: distance_to_travel})
                 else
-                    next
+                    @facilities_with_distance.push({facility: facility, distance: nil})
                 end
             end
         end
