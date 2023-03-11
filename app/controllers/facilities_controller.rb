@@ -8,6 +8,10 @@ class FacilitiesController < ApplicationController
 
         @facilities = Facility.where(["name LIKE :name", { :name => "%#{params[:q]}%" }])
 
+        if Rails.env.production?
+            @latitude = request.location.latitude
+            @longitude = request.location.longitude
+        end
     end
 
     def new
