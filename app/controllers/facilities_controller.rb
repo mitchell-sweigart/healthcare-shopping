@@ -11,7 +11,7 @@ class FacilitiesController < ApplicationController
         if Rails.env.production?
             @latitude = request.location.latitude
             @longitude = request.location.longitude
-
+            @facilities_with_distance = []
             @facilities.each do |facility|
                 facility_lat = facility.latitude
                 facility_lon = facility.longitude
@@ -20,7 +20,7 @@ class FacilitiesController < ApplicationController
                 direction_data_hash = JSON.parse(direction_data_raw)
                 distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
 
-                facility[:distance] = distance_to_travel
+                @facilities_with_distance.push({facility: facility, distance: distance_to_travel})
             end
         end
     end
