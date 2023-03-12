@@ -54,10 +54,18 @@
 
         <div class="card-body">
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-6">
                     <div class="card-title"><%= link_to "#{negotiated_rate.facility.name}", facility_path(negotiated_rate.facility) %></div>
                     <p class="card-title"><%= "#{negotiated_rate.facility.address_line_one}" %></p>
                     <p class="card-title"><%= "#{negotiated_rate.facility.address_city}, #{negotiated_rate.facility.address_state}, #{negotiated_rate.facility.address_zip_code}" %></p>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-title">Quality Rating</div>
+                    <p class="card-text"><%= negotiated_rate.facility.overall_rating %></p>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-title">Reward</div>
+                    <p class="card-text"><%= number_to_currency(nrwd[:reward], :unit => "$") %></p>
                 </div>
                 <div class="col-md-2">
                     <div class="card-title">Distance</div>

@@ -2,15 +2,46 @@ class NegotiatedRatesController < ApplicationController
     require "csv"
 
     def index
-        @insurance_carrier = params[:query_4]
+        code = params[:query]
         sort_order = params[:query_5]
-        @negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "%#{params[:query]}%")
+
+        if sort_order == "1"
+            negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "#{code == "" ? "470" : params[:query]}").order(:negotiated_rate)
+        else 
+            negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "#{code == "" ? "470" : params[:query]}").order(negotiated_rate: :desc)
+        end
+
+        array = []
+
+        negotiated_rates.each do |negotiated_rate|
+                array.append(negotiated_rate.negotiated_rate)
+        end
+
+        def median(array)
+            return nil if array.empty?
+            sorted = array.sort
+            len = sorted.length
+            (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
+        end
+
+        mean = array.sum(0.0) / array.size
+        sum = array.sum(0.0) { |element| (element - mean) ** 2 }
+        variance = sum / (array.size - 1)
+        standard_deviation = Math.sqrt(variance)
+        quarter_standard_deviation = standard_deviation / 4
+        services_median = median(array)
+        if array.length() > 0
+            benchmark = services_median - quarter_standard_deviation
+        else 
+            benchmark = 0
+        end
+
+        @negotiated_rates_with_distance = []
 
         if Rails.env.production?
             @latitude = request.location.latitude
             @longitude = request.location.longitude
-            @negotiated_rates_with_distance = []
-            @negotiated_rates.each do |negotiated_rate|
+            negotiated_rates.each do |negotiated_rate|
                 if negotiated_rate.facility.latitude != nil
                     facility_lat = negotiated_rate.facility.latitude
                     facility_lon = negotiated_rate.facility.longitude
@@ -19,15 +50,14 @@ class NegotiatedRatesController < ApplicationController
                     direction_data_hash = JSON.parse(direction_data_raw)
                     distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
 
-                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
+                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: distance_to_travel, reward: negotiated_rate.negotiated_rate - benchmark})
                 else
-                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: nil})
+                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: nil, reward: negotiated_rate.negotiated_rate - benchmark})
                 end
             end
         else
-            @negotiated_rates_with_distance = []
-            @negotiated_rates.each do |negotiated_rate|
-                @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: nil})
+            negotiated_rates.each do |negotiated_rate|
+                @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: nil, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
             end
         end
     end
