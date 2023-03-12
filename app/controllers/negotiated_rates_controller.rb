@@ -50,9 +50,9 @@ class NegotiatedRatesController < ApplicationController
                     direction_data_hash = JSON.parse(direction_data_raw)
                     distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
 
-                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: distance_to_travel, reward: negotiated_rate.negotiated_rate - benchmark})
+                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: distance_to_travel, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
                 else
-                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: nil, reward: negotiated_rate.negotiated_rate - benchmark})
+                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: nil, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
                 end
             end
         else
