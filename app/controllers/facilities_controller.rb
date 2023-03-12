@@ -6,7 +6,7 @@ class FacilitiesController < ApplicationController
 
     def index
 
-        @facilities = Facility.where(["name LIKE :name", { :name => "%#{params[:q]}%" }])
+        @facilities = Facility.where(["name LIKE :name", { :name => "%#{params[:q]}%" }]).order(:name)
 
         if Rails.env.production?
             @latitude = request.location.latitude
