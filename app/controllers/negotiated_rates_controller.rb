@@ -5,12 +5,7 @@ class NegotiatedRatesController < ApplicationController
         code = params[:query]
         sort_order = params[:query_5]
 
-        if sort_order == "1"
-            negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "#{code == "" ? "470" : params[:query]}").order(:negotiated_rate)
-        else 
-            negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "#{code == "" ? "470" : params[:query]}").order(negotiated_rate: :desc)
-        end
-
+        negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "#{code == "" ? "470" : params[:query]}")
         array = []
 
         negotiated_rates.each do |negotiated_rate|
@@ -36,7 +31,7 @@ class NegotiatedRatesController < ApplicationController
             benchmark = 0
         end
 
-        @negotiated_rates_with_distance = []
+        nrwd = []
 
         if Rails.env.production?
             @latitude = request.location.latitude
@@ -50,16 +45,35 @@ class NegotiatedRatesController < ApplicationController
                     direction_data_hash = JSON.parse(direction_data_raw)
                     distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
 
-                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: distance_to_travel, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
+                    nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
                 else
-                    @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: nil, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
+                    nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
                 end
             end
         else
             negotiated_rates.each do |negotiated_rate|
-                @negotiated_rates_with_distance.push({negotiated_rate: negotiated_rate, distance: nil, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
+                nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
             end
         end
+
+        if sort_order == "1"
+            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:negotiated_rate].negotiated_rate}
+        elsif sort_order == "2"
+            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:negotiated_rate].negotiated_rate}.reverse!
+        elsif sort_order == "3"
+            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:negotiated_rate].facility.overall_rating}
+        elsif sort_order == "4"
+            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:negotiated_rate].facility.overall_rating}.reverse!
+        elsif sort_order == "5"
+            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:reward]}
+        elsif sort_order == "6"
+            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:reward]}
+        elsif sort_order == "7"
+            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:distance]}
+        elsif sort_order == "8"
+            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:distance]}.reverse!
+        end
+        
     end
 
     def new

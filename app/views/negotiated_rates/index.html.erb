@@ -15,12 +15,13 @@
 <br/>
 
 <%= form_with url: "/negotiated_rates", class: "row g-3", method: :get do |form| %>
-    <div class="col-md-2">
-        <%= form.text_field :query, placeholder: "CPT/HCPCS", class: "form-control" %>
+
+    <div class="col-md-6">
+        <%= form.select :query, Code.all.collect { |c| [ c.code + " " + c.description, c.code ] }, {}, class: "form-select" %>
     </div>
 
-    <div class="col-md-2">
-        <%= form.select :query_5, options_for_select([['Cash Price: $ - $$$', 1], ['Cash Price: $$$ - $', 2]]) { |hpn| [ hpn[0], hpn[0] ] }, {}, class: "form-select" %>
+    <div class="col-md-3">
+        <%= form.select :query_5, options_for_select([['Price: $ - $$$', 1], ['Price: $$$ - $', 2], ['Quality: High - Low', 3], ['Quality: Low - High', 4], ['Reward: $ - $$$', 5], ['Reward: $$$ - $', 6], ['Distance: Far - Close', 7], ['Distance: Close - Far', 8]]) { |hpn| [ hpn[0], hpn[0] ] }, {}, class: "form-select" %>
     </div>
 
     <div class="col-md-1">
