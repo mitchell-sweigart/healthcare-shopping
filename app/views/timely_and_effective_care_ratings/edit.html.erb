@@ -26,7 +26,7 @@
     </div>
     <div class="col-md-6">
       <%= f.label :facility_id, "Facility ID", class: "form-label" %>
-      <%= select("rating", "facility_id", Facility.all.collect {|p| [ p.name, p.id ] }, {}, class: "form-control") %>
+      <%= select("rating", "facility_id", Facility.all.collect {|p| [ p.name, p.id ] }, {}, class: "form-select") %>
     </div>
     <div class="col-2">
       <%= f.submit "Edit rating", class: "btn btn-primary" %>

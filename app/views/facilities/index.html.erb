@@ -44,6 +44,9 @@
           <th scope="col" id="services-name">
             <span>Address</span>
           </th>
+          <th scope="col" id="services-name">
+            <span>Type</span>
+          </th>
           <th scope="col" id="services-cpt-hcpcs">
             <span>NPI</span>
           </th>
@@ -64,6 +67,7 @@
             <th scope="row"><%= facility.id %></th>
             <td><%= facility.name %></td>
             <td><%= facility.address_line_one %> <%= facility.address_line_two %>, <%= facility.address_city %> <%= facility.address_state %> <%= facility.address_zip_code %></td>
+            <td><%= facility.facility_type %></td>
             <td><%= facility.npi %></td>
             <td><%= facility.facility_id %></td>
             <td><%= facility.overall_rating %></td>

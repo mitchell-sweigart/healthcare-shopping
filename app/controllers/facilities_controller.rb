@@ -31,6 +31,7 @@ class FacilitiesController < ApplicationController
         @timely_and_effective_care_ratings = Facility.find(params[:id]).timely_and_effective_care_ratings
         @services = Facility.find(params[:id]).services
         @ratings = Facility.find(params[:id]).ratings
+        facilityID = @facility.facility_id
 
         begin
             google_maps_api_key = "AIzaSyDSL85vkykDd8e2g7Z5mzd-zJvf779k0dM"
@@ -51,7 +52,6 @@ class FacilitiesController < ApplicationController
         end
 
         begin
-            facilityID = @facility.facility_id
             time_and_effective_url = "https://data.cms.gov/provider-data/api/1/datastore/sql?query=%5BSELECT%20%2A%20FROM%207526d6d9-59a1-554a-b091-696e3da3aa84%5D%5BWHERE%20facility_id%20%3D%20%22#{facilityID}%22%5D&show_db_columns=true"
             time_and_effective_care_ratings_raw = URI.open(time_and_effective_url).read
             time_and_effective_care_ratings_hash = JSON.parse(time_and_effective_care_ratings_raw)
@@ -87,7 +87,48 @@ class FacilitiesController < ApplicationController
                 Facility.update(@facility.id, update_facility_hash)
             end
         rescue
-            puts "Facility does not have a facility ID"
+            puts "Facility does not have a Hospital Record"
+        end
+
+        begin
+            npi = @facility.npi
+            asc_url = "https://data.cms.gov/provider-data/api/1/datastore/sql?query=%5BSELECT%20%2A%20FROM%20340ffea2-1ba3-5528-bb90-5bfe0b50e5ec%5D%5BWHERE%20npi%20%3D%20%22#{npi}%22%5D"
+
+            asc_raw = URI.open(asc_url).read
+            asc_hash = JSON.parse(asc_raw)
+            asc = asc_hash.last()
+
+            update_asc_hash = {}
+            update_asc_hash[:facility_id] = asc["Facility ID"]
+            update_asc_hash[:name] = asc["Facility Name"]
+            update_asc_hash[:address_city] = asc["City"]
+            update_asc_hash[:address_state] = asc["State"]
+            update_asc_hash[:address_zip_code] = asc["ZIP Code"]
+            update_asc_hash[:overall_rating] = asc["ASC-9 Rate"]
+            Facility.update(@facility.id, update_asc_hash)
+        rescue
+            puts "Facility does not have Ambulatory Surgical Center Quality Measures"
+        end
+
+        begin
+            dialysis_url = "https://data.cms.gov/provider-data/api/1/datastore/sql?query=%5BSELECT%20%2A%20FROM%20263d29a4-b636-5842-a2b4-ea668e525602%5D%5BWHERE%20provider_number%20%3D%20%22#{facilityID}%22%5D"
+
+            dialysis_raw = URI.open(dialysis_url).read
+            dialysis_hash = JSON.parse(dialysis_raw)
+            dialysis = dialysis_hash.last()
+
+            update_dialysis_hash = {}
+            update_dialysis_hash[:facility_id] = dialysis["Provider Number"]
+            update_dialysis_hash[:name] = dialysis["Facility Name"]
+            update_dialysis_hash[:address_line_one] = dialysis["Address Line 1"]
+            update_dialysis_hash[:address_line_two] = dialysis["Address Line 2"]
+            update_dialysis_hash[:address_city] = dialysis["City"]
+            update_dialysis_hash[:address_state] = dialysis["State"]
+            update_dialysis_hash[:address_zip_code] = dialysis["Zip"]
+            update_dialysis_hash[:overall_rating] = dialysis["Five Star"]
+            Facility.update(@facility.id, update_dialysis_hash)
+        rescue
+            puts "Facility does not have Dialysis Information Available"
         end
 
         @facility = Facility.find(params[:id])
@@ -114,8 +155,10 @@ class FacilitiesController < ApplicationController
             :address_city, 
             :address_state, 
             :address_zip_code,
-            :clinician_ids,
-            :overall_rating
+            :overall_rating,
+            :latitude,
+            :longitude,
+            clinician_ids: []
             ))
 
             flash.notice = "Facility successfully updated!"
@@ -197,6 +240,8 @@ class FacilitiesController < ApplicationController
             :npi, 
             :org_PAC_ID,
             :overall_rating,
+            :latitude,
+            :longitude,
             clinician_ids: []
             )
     end

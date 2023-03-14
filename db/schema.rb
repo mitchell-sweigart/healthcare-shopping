@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_11_171029) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_14_203400) do
   create_table "clinicians", force: :cascade do |t|
     t.integer "npi"
     t.integer "ind_PAC_ID"
@@ -56,7 +56,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_171029) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "org_PAC_ID"
-    t.integer "facility_id"
+    t.string "facility_id"
     t.string "facility_type"
     t.string "overall_rating"
     t.float "latitude"
