@@ -71,7 +71,7 @@ class NegotiatedRatesController < ApplicationController
         elsif sort_order == "7"
             return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:distance].sub("mi","").to_f}
         elsif sort_order == "8"
-            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:distance]}.reverse!
+            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:distance].sub("mi","").to_f}.reverse!
         end
         
     end
