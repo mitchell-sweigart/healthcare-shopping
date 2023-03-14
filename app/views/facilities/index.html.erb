@@ -48,7 +48,7 @@
             <span>NPI</span>
           </th>
           <th scope="col" id="services-gross-charge">
-            <span>Distance</span>
+            <span>CMS Facility ID</span>
           </th>
           <th scope="col" id="services-gross-charge">
             <span>CMS Rating</span>
@@ -56,32 +56,19 @@
           <th scope="col" id="services-action">
             <span></span>
           </th>
-          <th scope="col" id="services-action_2">
-            <span></span>
-          </th>
-          <th scope="col" id="services-action_3">
-            <span></span>
-          </th>
         </tr>
     </thead>
     <tbody>
-        <% @facilities_with_distance.each do |fwd| %>
-          <% facility = fwd[:facility] %>
+        <% @facilities.each do |facility| %>
           <tr class="align-middle">
             <th scope="row"><%= facility.id %></th>
             <td><%= facility.name %></td>
             <td><%= facility.address_line_one %> <%= facility.address_line_two %>, <%= facility.address_city %> <%= facility.address_state %> <%= facility.address_zip_code %></td>
             <td><%= facility.npi %></td>
-            <td><%= fwd[:distance] %></td>
+            <td><%= facility.facility_id %></td>
             <td><%= facility.overall_rating %></td>
             <td>
               <%= button_to "View", facility_path(facility), class: "btn btn-outline-secondary", :method => :get %>
-            </td>
-            <td>
-              <%= button_to "Edit", edit_facility_path(facility), class: "btn btn-outline-secondary", :method => :get %>
-            </td>
-            <td>
-              <%= button_to "Delete", facility_path(facility.id), :method => :delete, class: "btn btn-outline-danger", :method => :delete %>
             </td>
           </tr>
       <% end %>

@@ -5,33 +5,7 @@ class FacilitiesController < ApplicationController
     require "open-uri"
 
     def index
-
         @facilities = Facility.where(["name LIKE :name", { :name => "%#{params[:q]}%" }]).order(:name)
-
-        if Rails.env.production?
-            @latitude = request.location.latitude
-            @longitude = request.location.longitude
-            @facilities_with_distance = []
-            @facilities.each do |facility|
-                if facility.latitude != nil
-                    facility_lat = facility.latitude
-                    facility_lon = facility.longitude
-                    google_maps_direction_api = "https://maps.googleapis.com/maps/api/directions/json?origin=#{@latitude},#{@longitude}&destination=#{facility_lat},#{facility_lon}&key=AIzaSyDSL85vkykDd8e2g7Z5mzd-zJvf779k0dM"
-                    direction_data_raw = URI.open(google_maps_direction_api).read
-                    direction_data_hash = JSON.parse(direction_data_raw)
-                    distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
-
-                    @facilities_with_distance.push({facility: facility, distance: distance_to_travel})
-                else
-                    @facilities_with_distance.push({facility: facility, distance: nil})
-                end
-            end
-        else
-            @facilities_with_distance = []
-            @facilities.each do |facility|
-                @facilities_with_distance.push({facility: facility, distance: nil})
-            end
-        end
     end
 
     def new
