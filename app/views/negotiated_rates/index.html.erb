@@ -33,46 +33,47 @@
 <% end %>
 
 <p style="color: green"><%= notice %></p>
+<% if @negotiated_rates_with_distance.nil? == false %>
+    <% @negotiated_rates_with_distance.each do |nrwd| %>
+        <% negotiated_rate = nrwd[:negotiated_rate] %>
+        <div class="card lh-base my-3">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-8 fs-6">
+                        <div class="card-title"><%= "#{negotiated_rate.billing_code_type}: #{negotiated_rate.billing_code}" %></div>
+                        <p class="card-text fs-6 fw-semibold"><%= "#{negotiated_rate.code.concise_description()}" %></p>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="h3 card-title"><%= number_to_currency(negotiated_rate.negotiated_rate, :unit => "$") %></div>
+                        <p class="card-text">Insurance Rate</p>
+                    </div>
+                    <div class="col-md-2">
+                        <%= button_to "Learn More", negotiated_rate_path(negotiated_rate), class: "btn btn-primary", method: :get %>
+                    </div>
+                </div>
+            </div>
 
-<% @negotiated_rates_with_distance.each do |nrwd| %>
-    <% negotiated_rate = nrwd[:negotiated_rate] %>
-    <div class="card lh-base my-3">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-md-8 fs-6">
-                    <div class="card-title"><%= "#{negotiated_rate.billing_code_type}: #{negotiated_rate.billing_code}" %></div>
-                    <p class="card-text fs-6 fw-semibold"><%= "#{negotiated_rate.code.concise_description()}" %></p>
-                </div>
-                <div class="col-md-2">
-                    <div class="h3 card-title"><%= number_to_currency(negotiated_rate.negotiated_rate, :unit => "$") %></div>
-                    <p class="card-text">Insurance Rate</p>
-                </div>
-                <div class="col-md-2">
-                    <%= button_to "Learn More", negotiated_rate_path(negotiated_rate), class: "btn btn-primary", method: :get %>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-title"><%= link_to "#{negotiated_rate.facility.name}", facility_path(negotiated_rate.facility) %></div>
+                        <p class="card-title"><%= "#{negotiated_rate.facility.address_line_one}" %></p>
+                        <p class="card-title"><%= "#{negotiated_rate.facility.address_city}, #{negotiated_rate.facility.address_state}, #{negotiated_rate.facility.address_zip_code}" %></p>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card-title">Quality Rating</div>
+                        <p class="card-text"><%= negotiated_rate.facility.overall_rating %></p>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card-title">Reward</div>
+                        <p class="card-text"><%= number_to_currency(nrwd[:reward], :unit => "$") %></p>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card-title">Distance</div>
+                        <p class="card-text"><%= "#{nrwd[:distance]}" %></p>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card-title"><%= link_to "#{negotiated_rate.facility.name}", facility_path(negotiated_rate.facility) %></div>
-                    <p class="card-title"><%= "#{negotiated_rate.facility.address_line_one}" %></p>
-                    <p class="card-title"><%= "#{negotiated_rate.facility.address_city}, #{negotiated_rate.facility.address_state}, #{negotiated_rate.facility.address_zip_code}" %></p>
-                </div>
-                <div class="col-md-2">
-                    <div class="card-title">Quality Rating</div>
-                    <p class="card-text"><%= negotiated_rate.facility.overall_rating %></p>
-                </div>
-                <div class="col-md-2">
-                    <div class="card-title">Reward</div>
-                    <p class="card-text"><%= number_to_currency(nrwd[:reward], :unit => "$") %></p>
-                </div>
-                <div class="col-md-2">
-                    <div class="card-title">Distance</div>
-                    <p class="card-text"><%= "#{nrwd[:distance]}" %></p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <% end %>
 <% end %>

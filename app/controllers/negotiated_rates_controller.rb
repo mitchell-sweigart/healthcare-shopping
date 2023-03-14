@@ -5,7 +5,7 @@ class NegotiatedRatesController < ApplicationController
         code = params[:query]
         sort_order = params[:query_5]
 
-        negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "#{code == "" ? "470" : params[:query]}")
+        negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "#{code.nil? == true ? "470" : params[:query]}")
         array = []
 
         negotiated_rates.each do |negotiated_rate|
