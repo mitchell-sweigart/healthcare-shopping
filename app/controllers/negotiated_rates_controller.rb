@@ -4,12 +4,12 @@ class NegotiatedRatesController < ApplicationController
     def index
         code = params[:query]
         sort_order = params[:query_5]
-
-        negotiated_rates = NegotiatedRate.where("billing_code LIKE ?", "#{code.nil? == true ? "470" : params[:query]}")
+        #prohibited_billing_code_modifiers = ["['52']", "['53']", "['73']", "['74']"]
+        negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['52', 'PT']","['59']"]))
         array = []
 
         negotiated_rates.each do |negotiated_rate|
-                array.append(negotiated_rate.negotiated_rate)
+                array.push(negotiated_rate[:negotiated_rate])
         end
 
         def median(array)
