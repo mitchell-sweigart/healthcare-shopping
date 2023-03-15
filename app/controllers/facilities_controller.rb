@@ -170,27 +170,27 @@ class FacilitiesController < ApplicationController
 
     def import
         file = params[:file]
-        return redirect_to providers_path, notice: "Only CSV Please" unless file.content_type == "text/csv"
+        return redirect_to facilities_path, notice: "Only CSV Please" unless file.content_type == "text/csv"
         file_open = File.open(file)
         csv = CSV.parse(file_open, headers: true, col_sep: ',')
         csv.each do |row|
-            provider_hash = {}
-            provider_hash[:name] = row["name"]
-            provider_hash[:address_line_one] = row["address_line_one"]
-            provider_hash[:address_line_two] = row["address_line_two"]
-            provider_hash[:address_city] = row["address_city"]
-            provider_hash[:address_state] = row["address_state"]
-            provider_hash[:address_zip_code] = row["address_zip_code"]
-            provider_hash[:npi] = row["npi"]
-            provider_hash[:org_PAC_ID] = row["org_PAC_ID"]
-            Facility.find_or_create_by!(provider_hash)
+            facility_hash = {}
+            facility_hash[:name] = row["name"]
+            facility_hash[:address_line_one] = row["address_line_one"]
+            facility_hash[:address_line_two] = row["address_line_two"]
+            facility_hash[:address_city] = row["address_city"]
+            facility_hash[:address_state] = row["address_state"]
+            facility_hash[:address_zip_code] = row["address_zip_code"]
+            facility_hash[:npi] = row["npi"]
+            facility_hash[:org_PAC_ID] = row["org_PAC_ID"]
+            Facility.find_or_create_by!(facility_hash)
         end
-        redirect_to providers_path, notice: "Providers Imported!"
+        redirect_to facilities_path, notice: "facilities Imported!"
     end
 
     def bulk_import
         file = params[:file]
-        return redirect_to providers_path, notice: "Only CSV Please" unless file.content_type == "text/csv"
+        return redirect_to facilities_path, notice: "Only CSV Please" unless file.content_type == "text/csv"
         file_open = File.open(file)
         csv = CSV.parse(file_open, headers: true, col_sep: ',')
 
@@ -211,7 +211,7 @@ class FacilitiesController < ApplicationController
                 Facility.find_or_create_by!(facility_hash)
             end
         end
-        redirect_to providers_path, notice: "Facilities Imported!"
+        redirect_to facilities_path, notice: "Facilities Imported!"
     end
 
     def bulk_delete
@@ -220,9 +220,9 @@ class FacilitiesController < ApplicationController
         file_open = File.open(file)
         csv = CSV.parse(file_open, headers: true, col_sep: ',')
         csv.each do |row|
-            Provider.destroy(row["provider_id"])
+            Facility.destroy(row["facility_id"])
         end
-        redirect_to providers_path, notice: "Providers Deleted"
+        redirect_to providers_path, notice: "Facilities Deleted"
     end
 
     private
