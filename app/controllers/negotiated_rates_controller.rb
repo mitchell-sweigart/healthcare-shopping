@@ -37,7 +37,7 @@ class NegotiatedRatesController < ApplicationController
         if Rails.env.production?
             @latitude = request.location.latitude
             @longitude = request.location.longitude
-            negotiated_rates.each do |negotiated_rate|
+            @negotiated_rates.each do |negotiated_rate|
                 if negotiated_rate.facility.latitude != nil
                     facility_lat = negotiated_rate.facility.latitude
                     facility_lon = negotiated_rate.facility.longitude
