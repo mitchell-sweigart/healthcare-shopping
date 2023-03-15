@@ -76,7 +76,7 @@
             <td><%= facility.facility_id %></td>
             <td><%= facility.overall_rating %></td>
             <td>
-                <%= button_to "Delete", negotiated_rate_path(facilit.id), class: "btn btn-outline-danger", method: :delete %>
+                <%= button_to "Delete", facility_path(facilit.id), class: "btn btn-outline-danger", method: :delete %>
             </td>
           </tr>
       <% end %>
