@@ -2,7 +2,7 @@ class CodesController < ApplicationController
     require "csv"
 
     def index
-        @codes = Code.where(["code LIKE :code AND description LIKE :description AND plain_language_description LIKE :plain_language_description", { :code => "%#{params[:query]}%", :description => "%#{params[:query_2]}%", :plain_language_description => "%#{params[:query_3]}%" }])
+        @codes = Code.all
         respond_to do |format|
             format.html
             format.csv

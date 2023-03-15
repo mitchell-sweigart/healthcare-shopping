@@ -5,10 +5,11 @@ class NegotiatedRatesController < ApplicationController
         code = params[:query]
         sort_order = params[:query_5]
         #prohibited_billing_code_modifiers = ["['52']", "['53']", "['73']", "['74']"]
-        negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['52', 'PT']","['59']"]))
+        @negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['52', 'PT']","['59']"]))
+
         array = []
 
-        negotiated_rates.each do |negotiated_rate|
+        @negotiated_rates.each do |negotiated_rate|
                 array.push(negotiated_rate[:negotiated_rate])
         end
 
@@ -51,7 +52,7 @@ class NegotiatedRatesController < ApplicationController
                 end
             end
         else
-            negotiated_rates.each do |negotiated_rate|
+            @negotiated_rates.each do |negotiated_rate|
                 nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
             end
         end
@@ -72,8 +73,7 @@ class NegotiatedRatesController < ApplicationController
             return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:distance].sub("mi","").to_f}.reverse!
         elsif sort_order == "8"
             return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:distance].sub("mi","").to_f}
-        end
-        
+        end  
     end
 
     def new

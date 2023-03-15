@@ -1,20 +1,32 @@
-<%= CSV.generate_line(["service_id", "gross_charge", "self_pay_cash_price", "aetna_commercial", "aetna_asa", "cbc_commercial", "cigna", "geisinger_commercial", "highmark_choice_blue", "highmark_commercial", "multiplan", "uhc_commercial", "upmc_commercial", "wellspan", "provider_id", "code_id"]) -%>
-<% @services.each do |service| %>
 <%= CSV.generate_line([
-    service.id, 
-    service.gross_charge, 
-    service.self_pay_cash_price, 
-    service.aetna_commercial, 
-    service.aetna_asa, 
-    service.cbc_commercial, 
-    service.cigna, 
-    service.geisinger_commercial, 
-    service.highmark_choice_blue, 
-    service.highmark_commercial, 
-    service.multiplan, 
-    service.uhc_commercial, 
-    service.upmc_commercial, 
-    service.wellspan, 
-    service.facility_id,
-    service.code_id]) %>
+    "billing_code", 
+    "billing_code_type", 
+    "negotiation_arrangement", 
+    "negotiated_type", 
+    "negotiated_rate", 
+    "experation_date", 
+    "billing_class", 
+    "service_code", 
+    "tin", 
+    "tin_type", 
+    "npi", 
+    "facility_id", 
+    "clinician_id",
+    "code_id"]) -%>
+<% @negotiated_rates.each do |negotiated_rate| %>
+    <%= CSV.generate_line([
+    negotiated_rate.billing_code, 
+    negotiated_rate.billing_code_type, 
+    negotiated_rate.negotiation_arrangement, 
+    negotiated_rate.negotiated_type, 
+    negotiated_rate.negotiated_rate, 
+    negotiated_rate.experation_date, 
+    negotiated_rate.billing_class, 
+    negotiated_rate.service_code, 
+    negotiated_rate.tin, 
+    negotiated_rate.tin_type, 
+    negotiated_rate.npi, 
+    negotiated_rate.facility_id, 
+    negotiated_rate.clinician_id, 
+    negotiated_rate.code_id]) -%>
 <% end %>
