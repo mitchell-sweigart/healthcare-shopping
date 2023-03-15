@@ -16,6 +16,10 @@
     <%= form.button "Delete", class: "btn btn-outline-danger" %>
   <% end %>
 
+  <div class="">
+    <%= link_to "Download as CSV", facilities_path(format: :csv), download: ["Facilities", Date.today].join(" "), class: "btn btn-outline-secondary"  %>
+  </div>
+
   <%= button_to "New Facility", new_facility_path, class:"btn btn-primary", :method => :get  %>
 </div>
 

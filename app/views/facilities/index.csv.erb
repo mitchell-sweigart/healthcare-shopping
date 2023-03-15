@@ -1,0 +1,30 @@
+<%= CSV.generate_line([
+    "name", 
+    "address_line_one", 
+    "address_line_two", 
+    "address_city", 
+    "address_state", 
+    "address_zip_code", 
+    "npi", 
+    "org_PAC_ID", 
+    "facility_id", 
+    "facility_type", 
+    "overall_rating", 
+    "latitude", 
+    "longitude"]) -%>
+<% @facilities.each do |facility| %>
+    <%= CSV.generate_line([
+    facility.name.sub(","," "), 
+    facility.address_line_one, 
+    facility.address_line_two, 
+    facility.address_city, 
+    facility.address_state, 
+    facility.address_zip_code, 
+    facility.npi, 
+    facility.org_PAC_ID, 
+    facility.facility_id, 
+    facility.facility_type, 
+    facility.overall_rating, 
+    facility.latitude, 
+    facility.longitude]).html_safe -%>
+<% end %>
