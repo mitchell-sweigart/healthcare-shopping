@@ -27,7 +27,7 @@ class NegotiatedRatesController < ApplicationController
         quarter_standard_deviation = standard_deviation / 4
         @services_median = median(array)
         if array.length() > 0
-            benchmark = services_median - quarter_standard_deviation
+            benchmark = @services_median - quarter_standard_deviation
         else 
             benchmark = 0
         end
