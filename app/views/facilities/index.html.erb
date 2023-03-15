@@ -69,14 +69,14 @@
         <% @facilities.each do |facility| %>
           <tr class="align-middle">
             <th scope="row"><%= facility.id %></th>
-            <td><%= facility.name %></td>
+            <td><%= link_to "#{facility.name}", facility_path(facility.id) %></td>
             <td><%= facility.address_line_one %> <%= facility.address_line_two %>, <%= facility.address_city %> <%= facility.address_state %> <%= facility.address_zip_code %></td>
             <td><%= facility.facility_type %></td>
             <td><%= facility.npi %></td>
             <td><%= facility.facility_id %></td>
             <td><%= facility.overall_rating %></td>
             <td>
-              <%= button_to "View", facility_path(facility), class: "btn btn-outline-secondary", :method => :get %>
+                <%= button_to "Delete", negotiated_rate_path(facilit.id), class: "btn btn-outline-danger", method: :delete %>
             </td>
           </tr>
       <% end %>
