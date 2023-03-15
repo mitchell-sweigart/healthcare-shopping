@@ -1,4 +1,5 @@
 <div class="d-flex flex-row align-items-center justify-content-around">
+    <%= "#{Median: @services_median}" %>
   <%= form_with url: import_negotiated_rates_path, class: "d-flex", method: :post do |form| %>
     <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
     <%= form.button "Import", class: "btn btn-outline-success"  %>

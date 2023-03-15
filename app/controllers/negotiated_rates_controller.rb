@@ -25,7 +25,7 @@ class NegotiatedRatesController < ApplicationController
         variance = sum / (array.size - 1)
         standard_deviation = Math.sqrt(variance)
         quarter_standard_deviation = standard_deviation / 4
-        services_median = median(array)
+        @services_median = median(array)
         if array.length() > 0
             benchmark = services_median - quarter_standard_deviation
         else 
