@@ -3,9 +3,10 @@ class NegotiatedRatesController < ApplicationController
 
     def index
         code = params[:query]
+        health_plan_id = params[:query_2]
         sort_order = params[:query_5]
         #prohibited_billing_code_modifiers = ["['52']", "['53']", "['73']", "['74']"]
-        @negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['52', 'PT']","['59']"]))
+        @negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id like :health_plan_id", {:code => params[:query], :health_plan_id => "%#{params[:query_2]}%"}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['52', 'PT']","['59']"]))
 
         array = []
 
@@ -121,7 +122,8 @@ class NegotiatedRatesController < ApplicationController
             :npi,
             :facility_id,
             :clinician_id,
-            :code_id
+            :code_id,
+            :health_plan_id
             ))
             flash.notice = "Negotiated Rate successfully updated!"
             redirect_to '/negotiated_rates'
@@ -151,6 +153,7 @@ class NegotiatedRatesController < ApplicationController
             negotiated_rate_hash[:tin] = row["tin"]
             negotiated_rate_hash[:tin_type] = row["tin_type"]
             negotiated_rate_hash[:npi] = row["npi"]
+            negotiated_rate_hash[:health_plan_id] = row["health_plan_id"].to_i
 
             code = Code.find_by(code: row["billing_code"])
 
@@ -201,7 +204,8 @@ class NegotiatedRatesController < ApplicationController
             :npi,
             :facility_id,
             :clinician_id,
-            :code_id
+            :code_id,
+            :health_plan_id
             )
     end  
 end
