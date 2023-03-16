@@ -6,7 +6,7 @@ class NegotiatedRatesController < ApplicationController
         health_plan_id = params[:query_2]
         sort_order = params[:query_5]
         #prohibited_billing_code_modifiers = ["['52']", "['53']", "['73']", "['74']"]
-        @negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id like :health_plan_id", {:code => params[:query], :health_plan_id => "%#{params[:query_2]}%"}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['52', 'PT']","['59']"]))
+        @negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id like :health_plan_id", {:code => params[:query], :health_plan_id => params[:query_2]}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code", {:code => params[:query]}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['52', 'PT']","['59']"]))
 
         array = []
 
