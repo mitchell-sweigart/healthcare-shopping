@@ -11,6 +11,11 @@
   <% end %>
 
   <%= button_to "New Negotiated Rate", new_negotiated_rate_path, class:"btn btn-primary", :method => :get  %>
+
+  <div class="col-md-2">
+    <%= link_to "Download as CSV", negotiated_rates_path(format: :csv), download: ["Negotiated Rates", Date.today, Time.now].join(" "), class: "btn btn-outline-secondary" %>
+  </div>  
+
 </div>
 
 <br/>
@@ -29,12 +34,13 @@
         <%= form.select :query_5, options_for_select([['Price: $ - $$$', 1], ['Price: $$$ - $', 2], ['Quality: High - Low', 3], ['Quality: Low - High', 4], ['Reward: $ - $$$', 5], ['Reward: $$$ - $', 6], ['Distance: Far - Close', 7], ['Distance: Close - Far', 8]]) { |hpn| [ hpn[0], hpn[1] ] }, {:selected => params[:query_5]}, class: "form-select" %>
     </div>
 
+    <div class="col-md-2">
+        <%= form.select :query_3, options_for_select([['Distance: 0 - 45mi', 1], ['Distance: 0 - 60mi', 2], ['Distance: All', 3]]) { |hpn| [ hpn[0], hpn[1] ] }, {:selected => params[:query_3]}, class: "form-select" %>
+    </div>
+
     <div class="col-md-1">
         <%= form.submit "Search", class: "btn btn-outline-success" %>
     </div>
-    <div class="col-md-2">
-        <%= link_to "Download as CSV", negotiated_rates_path(format: :csv), download: ["Negotiated Rates", Date.today, Time.now].join(" "), class: "btn btn-outline-secondary" %>
-    </div>  
 <% end %>
 
 <p style="color: green"><%= notice %></p>

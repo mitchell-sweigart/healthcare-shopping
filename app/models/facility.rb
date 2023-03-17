@@ -4,6 +4,7 @@ class Facility < ApplicationRecord
     has_many :ratings
     has_and_belongs_to_many :clinicians
     has_many :negotiated_rates
+    validates_uniqueness_of :npi
 
     def address()
         return self.address_line_one + " " + self.address_city +  " " + self.address_state +  " " + self.address_zip_code

@@ -4,40 +4,16 @@ class NegotiatedRatesController < ApplicationController
     def index
         code = params[:query]
         health_plan_id = params[:query_2]
+        distance_filter = params[:query_3]
         sort_order = params[:query_5]
         #prohibited_billing_code_modifiers = ["['52']", "['53']", "['73']", "['74']"]
         @negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id LIKE :health_plan_id", {:code => params[:query], :health_plan_id => health_plan_id}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id LIKE :health_plan_id", {:code => params[:query], :health_plan_id => health_plan_id}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['52', 'PT']","['59']"]))
 
+        nrwd = []
         array = []
 
-        @negotiated_rates.each do |negotiated_rate|
-                array.push(negotiated_rate[:negotiated_rate])
-        end
-
-        def median(array)
-            return nil if array.empty?
-            sorted = array.sort
-            len = sorted.length
-            (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
-        end
-
-        mean = array.sum(0.0) / array.size
-        sum = array.sum(0.0) { |element| (element - mean) ** 2 }
-        variance = sum / (array.size - 1)
-        standard_deviation = Math.sqrt(variance)
-        quarter_standard_deviation = standard_deviation / 4
-        @services_median = median(array)
-        if array.length() > 0
-            benchmark = @services_median - quarter_standard_deviation
-        else 
-            benchmark = 0
-        end
-
-        nrwd = []
-
         if Rails.env.production?
-            @latitude = request.location.latitude
-            @longitude = request.location.longitude
+
             @negotiated_rates.each do |negotiated_rate|
                 if negotiated_rate.facility.latitude != nil
                     facility_lat = negotiated_rate.facility.latitude
@@ -46,12 +22,50 @@ class NegotiatedRatesController < ApplicationController
                     direction_data_raw = URI.open(google_maps_direction_api).read
                     direction_data_hash = JSON.parse(direction_data_raw)
                     distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
+                    distance_to_travel_num = distance_to_travel.sub("mi","").to_f
 
-                    nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
+                    #conditionally push depending on distance
+                    if sort_order == "1" && distance_to_travel_num <= 45
+                        array.push(negotiated_rate[:negotiated_rate])
+                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
+                    elsif sort_order == "2" && distance_to_travel_num <= 60
+                        array.push(negotiated_rate[:negotiated_rate])
+                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
+                    elsif sort_order == "3"
+                        array.push(negotiated_rate[:negotiated_rate])
+                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
+                    else
+                        next
+                    end
                 else
-                    nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
+                    array.push(negotiated_rate[:negotiated_rate])
+                    nrwd.push({negotiated_rate: negotiated_rate, distance: nil})
                 end
             end
+
+            def median(array)
+                return nil if array.empty?
+                sorted = array.sort
+                len = sorted.length
+                (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
+            end
+    
+            mean = array.sum(0.0) / array.size
+            sum = array.sum(0.0) { |element| (element - mean) ** 2 }
+            variance = sum / (array.size - 1)
+            standard_deviation = Math.sqrt(variance)
+            quarter_standard_deviation = standard_deviation / 4
+            @services_median = median(array)
+            if array.length() > 0
+                benchmark = @services_median - quarter_standard_deviation
+            else 
+                benchmark = 0
+            end
+
+            nrwd.each do |nr|
+                nr[reward] = benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00
+            end
+
         else
             @negotiated_rates.each do |negotiated_rate|
                 nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
