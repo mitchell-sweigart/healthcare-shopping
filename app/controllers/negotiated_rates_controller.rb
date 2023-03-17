@@ -12,6 +12,13 @@ class NegotiatedRatesController < ApplicationController
         nrwd = []
         array = []
 
+        def median(array)
+            return nil if array.empty?
+            sorted = array.sort
+            len = sorted.length
+            (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
+        end
+
         if Rails.env.production?
 
             @negotiated_rates.each do |negotiated_rate|
@@ -42,13 +49,6 @@ class NegotiatedRatesController < ApplicationController
                     nrwd.push({negotiated_rate: negotiated_rate, distance: nil})
                 end
             end
-
-            def median(array)
-                return nil if array.empty?
-                sorted = array.sort
-                len = sorted.length
-                (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
-            end
     
             mean = array.sum(0.0) / array.size
             sum = array.sum(0.0) { |element| (element - mean) ** 2 }
@@ -56,6 +56,7 @@ class NegotiatedRatesController < ApplicationController
             standard_deviation = Math.sqrt(variance)
             quarter_standard_deviation = standard_deviation / 4
             @services_median = median(array)
+
             if array.length() > 0
                 benchmark = @services_median - quarter_standard_deviation
             else 
@@ -63,12 +64,12 @@ class NegotiatedRatesController < ApplicationController
             end
 
             nrwd.each do |nr|
-                nr[reward] = benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00
+                nr[:reward] = benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00
             end
 
         else
             @negotiated_rates.each do |negotiated_rate|
-                nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: benchmark - negotiated_rate.negotiated_rate > 0 ? benchmark - negotiated_rate.negotiated_rate : 0.00})
+                nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: 0.00})
             end
         end
 
