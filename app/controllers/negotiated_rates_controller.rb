@@ -32,13 +32,13 @@ class NegotiatedRatesController < ApplicationController
                     distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
                     distance_to_travel_num = distance_to_travel.sub("mi","").to_f
                     #conditionally push depending on distance
-                    if sort_order == "1" && distance_to_travel_num <= 45
+                    if distance_filter == "1" && distance_to_travel_num <= 45
                         array.push(negotiated_rate[:negotiated_rate])
                         nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                    elsif sort_order == "2" && distance_to_travel_num <= 60
+                    elsif distance_filter == "2" && distance_to_travel_num <= 60
                         array.push(negotiated_rate[:negotiated_rate])
                         nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                    elsif sort_order == "3"
+                    elsif distance_filter == "3"
                         array.push(negotiated_rate[:negotiated_rate])
                         nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
                     else
