@@ -22,7 +22,7 @@
     </div>
 
     <div class="col-md-3">
-        <%= form.select :query_2, options_for_select([['Highmark, Inc.:363000000106', 106], ['Highmark, Inc.:363000000328', 328]]) { |hpn| [ hpn[0], hpn[1] ] }, {:selected => params[:query_2]}, class: "form-select" %>
+        <%= form.select :query_2, options_for_select([['Highmark, Inc.:363000000106', 106], ['Highmark, Inc.:363000000328', 328], ["Highmark, Inc.:363000008010", 8010]]) { |hpn| [ hpn[0], hpn[1] ] }, {:selected => params[:query_2]}, class: "form-select" %>
     </div>
 
     <div class="col-md-2">
