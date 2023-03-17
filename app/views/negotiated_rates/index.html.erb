@@ -72,6 +72,10 @@
                         <p class="card-title"><%= "#{negotiated_rate.facility.address_city}, #{negotiated_rate.facility.address_state}, #{negotiated_rate.facility.address_zip_code}" %></p>
                     </div>
                     <div class="col-md-2">
+                        <div class="card-title">Billing Modifier(s)</div>
+                        <p class="card-text"><%= negotiated_rate.billing_code_modifier %></p>
+                    </div>
+                    <div class="col-md-2">
                         <div class="card-title">Quality Rating</div>
                         <p class="card-text"><%= negotiated_rate.facility.overall_rating %></p>
                     </div>
