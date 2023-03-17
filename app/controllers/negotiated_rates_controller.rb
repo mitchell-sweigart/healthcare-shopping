@@ -29,8 +29,9 @@ class NegotiatedRatesController < ApplicationController
                     direction_data_raw = URI.open(google_maps_direction_api).read
                     direction_data_hash = JSON.parse(direction_data_raw)
                     distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
+                    puts distance_to_travel
                     distance_to_travel_num = distance_to_travel.sub("mi","").to_f
-
+                    puts distance_to_travel_num
                     #conditionally push depending on distance
                     if sort_order == "1" && distance_to_travel_num <= 45
                         array.push(negotiated_rate[:negotiated_rate])
