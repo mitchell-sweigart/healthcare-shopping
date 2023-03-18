@@ -26,7 +26,7 @@ class NegotiatedRatesController < ApplicationController
                 rate_array = []
                 @negotiated_rates.each do |negotiated_rate|
                     if unique_negotiated_rate.npi == negotiated_rate.npi
-                        rate_array.append(negotiated_rate.npi)
+                        rate_array.append(negotiated_rate.negotiated_rate)
                     else
                         next
                     end
