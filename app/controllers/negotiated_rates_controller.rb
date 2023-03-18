@@ -7,8 +7,8 @@ class NegotiatedRatesController < ApplicationController
         distance_filter = params[:query_3]
         sort_order = params[:query_5]
         #prohibited_billing_code_modifiers = ["['52']", "['53']", "['73']", "['74']", "['78']"]
-        @negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id LIKE :health_plan_id", {:code => params[:query], :health_plan_id => health_plan_id}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id LIKE :health_plan_id", {:code => params[:query], :health_plan_id => health_plan_id}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['78']","['78','79']","['52', 'PT']","['59']"]))
-
+        @negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id LIKE :health_plan_id", {:code => params[:query], :health_plan_id => health_plan_id}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id LIKE :health_plan_id", {:code => params[:query], :health_plan_id => health_plan_id}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['78']","['78','79']","['52', 'PT']","['59']","['GC']"]))
+        @unique_neogtiated_rates = @negotiated_rates.uniq { |negotiated_rate| [negotiated_rate.npi] }
         nrwd = []
         array = []
 
