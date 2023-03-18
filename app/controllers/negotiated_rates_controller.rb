@@ -58,6 +58,9 @@ class NegotiatedRatesController < ApplicationController
                     elsif distance_filter == "3"
                         array.push(negotiated_rate[:negotiated_rate])
                         nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
+                    elsif distance_filter == "4" && distance_to_travel_num <= 35
+                        array.push(negotiated_rate[:negotiated_rate])
+                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
                     else
                         next
                     end
