@@ -22,7 +22,24 @@ class NegotiatedRatesController < ApplicationController
         if Rails.env.production?
             latitude = request.location.latitude
             longitude = request.location.longitude
-            @negotiated_rates.each do |negotiated_rate|
+            @unique_neogtiated_rates.each do |unique_negotiated_rate|
+                rate_array = []
+                @negotiated_rates.each do |negotiated_rate|
+                    if unique_negotiated_rate.npi == negotiated_rate.npi
+                        rate_array.append(negotiated_rate.npi)
+                    else
+                        next
+                    end
+                end
+
+                mean_rate = rate_array.sum(0.0) / rate_array.size
+                unique_negotiated_rate[:negotiated_rate] = mean_rate
+                unique_negotiated_rate[:billing_code_modifier] = nil
+
+            end
+
+
+            @unique_neogtiated_rates.each do |negotiated_rate|
                 if negotiated_rate.facility.latitude != nil
                     facility_lat = negotiated_rate.facility.latitude
                     facility_lon = negotiated_rate.facility.longitude
