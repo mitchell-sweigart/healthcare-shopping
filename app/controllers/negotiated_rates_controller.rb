@@ -1,5 +1,8 @@
 class NegotiatedRatesController < ApplicationController
     require "csv"
+    require "httparty"
+    require "json"
+    require "open-uri"
 
     def index
         code = params[:query]
@@ -8,7 +11,16 @@ class NegotiatedRatesController < ApplicationController
         sort_order = params[:query_5]
         #prohibited_billing_code_modifiers = ["['52']", "['53']", "['73']", "['74']", "['78']"]
         @negotiated_rates = NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id LIKE :health_plan_id", {:code => params[:query], :health_plan_id => health_plan_id}]).where(billing_code_modifier: nil).or(NegotiatedRate.where(["billing_code LIKE :code AND health_plan_id LIKE :health_plan_id", {:code => params[:query], :health_plan_id => health_plan_id}]).where.not(billing_code_modifier: ["['52']","['53']","['73']","['74']","['78']","['78','79']","['52', 'PT']","['59']","['GC']"]))
-        @unique_neogtiated_rates = @negotiated_rates.uniq { |negotiated_rate| [negotiated_rate.npi] }
+        @negotiated_rates.each do |negotiated_rates|
+            if negotiated_rates.billing_class == "professional"
+                negotiated_rates[:effective_npi] = negotiated_rates.tin
+            elsif negotiated_rates.billing_class == "institutional"
+                negotiated_rates[:effective_npi] = negotiated_rates.npi
+            else
+                next
+            end
+        end
+        @unique_neogtiated_rates = @negotiated_rates.uniq { |negotiated_rate| [negotiated_rate.effective_npi] }
         nrwd = []
         array = []
 
@@ -94,7 +106,7 @@ class NegotiatedRatesController < ApplicationController
         end
 
         if sort_order == "1"
-            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:negotiated_rate].negotiated_rate}
+            return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:negotiated_rate][:negotiated_rate]}
         elsif sort_order == "2"
             return @negotiated_rates_with_distance = nrwd.sort_by {|h| h[:negotiated_rate].negotiated_rate}.reverse!
         elsif sort_order == "3"
@@ -167,6 +179,54 @@ class NegotiatedRatesController < ApplicationController
         end
     end
 
+    def create_facility_via_api_call(npi)
+        facility_npi_url = "https://npiregistry.cms.hhs.gov/api/?number=#{npi}&enumeration_type=&taxonomy_description=&first_name=&use_first_name_alias=&last_name=&organization_name=&address_purpose=&city=&state=&postal_code=&country_code=&limit=&skip=&pretty=on&version=2.1"
+        facility_npi_raw = URI.open(facility_npi_url).read
+        facility_npi_hash = JSON.parse(facility_npi_raw)
+
+        facility_hash = {}
+        facility_hash[:name] = facility_npi_hash["results"][0]["basic"]["organization_name"]
+        facility_hash[:npi] = facility_npi_hash["results"][0]["number"]
+
+        facility_npi_hash["results"][0]['addresses'].each do |address|
+            if address['address_purpose'] == "LOCATION"
+                facility_hash[:address_line_one] = facility_npi_hash["results"][0]['addresses'][0]["address_1"]
+                facility_hash[:address_line_two] = facility_npi_hash["results"][0]['addresses'][0].fetch(:address_2, "")
+                facility_hash[:address_city] = facility_npi_hash["results"][0]['addresses'][0]["city"]
+                facility_hash[:address_state] = facility_npi_hash["results"][0]['addresses'][0]["state"]
+                facility_hash[:address_zip_code] = facility_npi_hash["results"][0]['addresses'][0]["postal_code"]
+            else
+                next
+            end
+        end
+        Facility.create!(facility_hash)
+    end
+
+    def create_clinician_via_api_call(npi)
+        clinician_api_url = "https://data.cms.gov/provider-data/api/1/datastore/sql?query=%5BSELECT%20%2A%20FROM%20e9c376df-9692-5773-8002-9a8082d134c6%5D%5BWHERE%20npi%20%3D%20%22#{npi}%22%5D"
+        clinician_api_raw = URI.open(clinician_api_url).read
+        clinician_api_hash = JSON.parse(clinician_api_raw)
+
+        clinician_api_hash.each do |clinician|
+            clinician_hash = {}
+            clinician_hash[:npi] = clinician["NPI"]
+            clinician_hash[:ind_PAC_ID] = clinician["Ind_PAC_ID"]
+            clinician_hash[:first_name] = clinician["frst_nm"]
+            clinician_hash[:middle_name] = clinician["mid_nm"]
+            clinician_hash[:last_name] = clinician["lst_nm"]
+            clinician_hash[:suffix] = clinician["suff"]
+            clinician_hash[:credential] = clinician["Cred"]
+            clinician_hash[:medical_school] = clinician["Med_sch"]
+            clinician_hash[:graduation_year] = clinician["Grd_yr"]
+            clinician_hash[:primary_speciality] = clinician["pri_spec"]
+            clinician_hash[:secondary_speciality_1] = clinician["sec_spec_1"]
+            clinician_hash[:secondary_speciality_2] = clinician["sec_spec_2"]
+            clinician_hash[:secondary_speciality_3] = clinician["sec_spec_3"]
+            clinician_hash[:secondary_speciality_4] = clinician["sec_spec_4"]
+            Clinician.create!(clinician_hash)
+        end
+    end
+
     def import
 
         file = params[:file]
@@ -191,21 +251,47 @@ class NegotiatedRatesController < ApplicationController
             negotiated_rate_hash[:health_plan_id] = row["health_plan_id"].to_i
 
             code = Code.find_by(code: row["billing_code"])
-
             negotiated_rate_hash[:code_id] = code.id
 
-            facility = Facility.find_by(npi: row["npi"])
-            clinician = Clinician.find_by(npi: row["npi"])
+            facility = {}
+            clinician = {}
 
-            if facility != nil
-                negotiated_rate_hash[:facility_id] = facility.id
-            elsif clinician != nil
-                negotiated_rate_hash[:clinician_id] = clinician.id
+            if row["billing_class"] == "institutional" && row["tin_type"] == "ein"
+
+                if Facility.exists?(npi: row["npi"]) == true
+                    facility = Facility.find_by(npi: row["npi"])
+                else
+                    create_facility_via_api_call(row["npi"])
+                    facility = Facility.find_by(npi: row["npi"])
+                end
+
+            elsif row["billing_class"] == "professional" && row["tin_type"] == "npi"
+
+                if Facility.exists?(npi: row["tin"]) == true
+                    facility = Facility.find_by(npi: row["tin"])
+                else
+                    create_facility_via_api_call(row["tin"])
+                    facility = Facility.find_by(npi: row["tin"])
+                end
+
+                if Clinician.exists?(npi: row["npi"]) == true
+                    clinician = Clinician.find_by(npi: row["npi"])
+                else
+                    create_clinician_via_api_call(row["npi"])
+                    clinician = Clinician.find_by(npi: row["npi"])
+                end
             else
-                next
-            end   
+                break
+            end
 
-            NegotiatedRate.create(negotiated_rate_hash)
+            if clinician.present? == false #not all NPIs are in the CMS API that we're hitting above and Institutional negotiated rates don't have a clincian association
+                negotiated_rate_hash[:facility_id] = facility.id
+                NegotiatedRate.create(negotiated_rate_hash)
+            else
+                negotiated_rate_hash[:facility_id] = facility.id
+                negotiated_rate_hash[:clinician_id] = clinician.id
+                NegotiatedRate.create(negotiated_rate_hash)
+            end
         end
         redirect_to negotiated_rates_path, notice: "Negotiated Rates Imported!"
     end

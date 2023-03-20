@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_16_040004) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_20_202851) do
   create_table "clinicians", force: :cascade do |t|
     t.integer "npi"
     t.integer "ind_PAC_ID"
@@ -88,6 +88,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_040004) do
     t.integer "clinician_id"
     t.integer "code_id"
     t.string "health_plan_id"
+    t.integer "effective_npi"
   end
 
   create_table "organizations", force: :cascade do |t|

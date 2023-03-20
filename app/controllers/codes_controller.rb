@@ -11,7 +11,7 @@ class CodesController < ApplicationController
 
     def new
         @code = Code.new
-        @providers = Provider.all
+        #@providers = Provider.all
     end
 
     def create
