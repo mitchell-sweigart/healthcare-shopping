@@ -21,8 +21,9 @@ class NegotiatedRatesController < ApplicationController
             end
         end
         @unique_neogtiated_rates = @negotiated_rates.uniq { |negotiated_rate| [negotiated_rate.effective_npi] }
+
         nrwd = []
-        array = []
+        @array = []
 
         def median(array)
             return nil if array.empty?
@@ -31,25 +32,25 @@ class NegotiatedRatesController < ApplicationController
             (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
         end
 
-        if Rails.env.production?
-            latitude = request.location.latitude
-            longitude = request.location.longitude
-            @unique_neogtiated_rates.each do |unique_negotiated_rate|
-                rate_array = []
-                @negotiated_rates.each do |negotiated_rate|
-                    if unique_negotiated_rate.npi == negotiated_rate.npi
-                        rate_array.append(negotiated_rate.negotiated_rate)
-                    else
-                        next
-                    end
+        latitude = request.location.latitude
+        longitude = request.location.longitude
+        @unique_neogtiated_rates.each do |unique_negotiated_rate|
+            rate_array = []
+            @negotiated_rates.each do |negotiated_rate|
+                if unique_negotiated_rate.npi == negotiated_rate.npi
+                    rate_array.append(negotiated_rate.negotiated_rate)
+                else
+                    next
                 end
-
-                mean_rate = rate_array.sum(0.0) / rate_array.size
-                unique_negotiated_rate[:negotiated_rate] = mean_rate
-                unique_negotiated_rate[:billing_code_modifier] = nil
-
             end
 
+            mean_rate = rate_array.sum(0.0) / rate_array.size
+            unique_negotiated_rate[:negotiated_rate] = mean_rate
+            unique_negotiated_rate[:billing_code_modifier] = nil
+
+        end
+
+        if Rails.env.production?
 
             @unique_neogtiated_rates.each do |negotiated_rate|
                 if negotiated_rate.facility.latitude != nil
@@ -81,15 +82,30 @@ class NegotiatedRatesController < ApplicationController
                     nrwd.push({negotiated_rate: negotiated_rate, distance: nil})
                 end
             end
-    
+
+            arry_without_outliers = []
+
             mean = array.sum(0.0) / array.size
             sum = array.sum(0.0) { |element| (element - mean) ** 2 }
             variance = sum / (array.size - 1)
             standard_deviation = Math.sqrt(variance)
-            quarter_standard_deviation = standard_deviation / 4
-            @services_median = median(array)
 
-            if array.length() > 0
+            array.each do |rate|
+                if rate < (mean + (3 * standard_deviation))
+                    arry_without_outliers.push(rate) 
+                else
+                    next
+                end
+            end
+    
+            mean = arry_without_outliers.sum(0.0) / arry_without_outliers.size
+            sum = arry_without_outliers.sum(0.0) { |element| (element - mean) ** 2 }
+            variance = sum / (arry_without_outliers.size - 1)
+            standard_deviation = Math.sqrt(variance)
+            quarter_standard_deviation = standard_deviation / 4
+            @services_median = median(arry_without_outliers)
+
+            if arry_without_outliers.length() > 0
                 benchmark = @services_median - quarter_standard_deviation
             else 
                 benchmark = 0
@@ -100,8 +116,42 @@ class NegotiatedRatesController < ApplicationController
             end
 
         else
-            @negotiated_rates.each do |negotiated_rate|
-                nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: 0.00})
+
+            @unique_neogtiated_rates.each do |negotiated_rate|
+                @array.push(negotiated_rate[:negotiated_rate])
+            end
+
+            @mean = @array.sum(0.0) / @array.size
+            sum = @array.sum(0.0) { |element| (element - @mean) ** 2 }
+            variance = sum / (@array.size - 1)
+            @standard_deviation = Math.sqrt(variance)
+
+            @arry_without_outliers = []
+
+            @array.each do |rate|
+                if rate < (@mean + (3 * @standard_deviation))
+                    @arry_without_outliers.push(rate) 
+                else
+                    next
+                end
+            end
+
+            @mean = @arry_without_outliers.sum(0.0) / @arry_without_outliers.size
+            sum = @arry_without_outliers.sum(0.0) { |element| (element - @mean) ** 2 }
+            variance = sum / (@arry_without_outliers.size - 1)
+            @standard_deviation = Math.sqrt(variance)
+            @quarter_standard_deviation = @standard_deviation / 4
+            @one_eighth_standard_deviation = @standard_deviation / 8
+            @services_median = median(@arry_without_outliers)
+
+            if @arry_without_outliers.length() > 0
+                @benchmark = @services_median - @one_eighth_standard_deviation
+            else 
+                @benchmark = 0
+            end
+
+            @unique_neogtiated_rates.each do |negotiated_rate|
+                nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: @benchmark - negotiated_rate.negotiated_rate > 0 ? @benchmark - negotiated_rate.negotiated_rate : 0.00})
             end
         end
 
