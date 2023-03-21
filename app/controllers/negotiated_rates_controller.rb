@@ -63,34 +63,34 @@ class NegotiatedRatesController < ApplicationController
                     distance_to_travel_num = distance_to_travel.sub("mi","").to_f
                     #conditionally push depending on distance
                     if distance_filter == "1" && distance_to_travel_num <= 45
-                        array.push(negotiated_rate[:negotiated_rate])
+                        @array.push(negotiated_rate[:negotiated_rate])
                         nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
                     elsif distance_filter == "2" && distance_to_travel_num <= 60
-                        array.push(negotiated_rate[:negotiated_rate])
+                        @array.push(negotiated_rate[:negotiated_rate])
                         nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
                     elsif distance_filter == "3"
-                        array.push(negotiated_rate[:negotiated_rate])
+                        @array.push(negotiated_rate[:negotiated_rate])
                         nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
                     elsif distance_filter == "4" && distance_to_travel_num <= 35
-                        array.push(negotiated_rate[:negotiated_rate])
+                        @array.push(negotiated_rate[:negotiated_rate])
                         nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
                     else
                         next
                     end
                 else
-                    array.push(negotiated_rate[:negotiated_rate])
+                    @array.push(negotiated_rate[:negotiated_rate])
                     nrwd.push({negotiated_rate: negotiated_rate, distance: nil})
                 end
             end
 
             arry_without_outliers = []
 
-            mean = array.sum(0.0) / array.size
-            sum = array.sum(0.0) { |element| (element - mean) ** 2 }
-            variance = sum / (array.size - 1)
+            mean = @array.sum(0.0) / @array.size
+            sum = @array.sum(0.0) { |element| (element - mean) ** 2 }
+            variance = sum / (@array.size - 1)
             standard_deviation = Math.sqrt(variance)
 
-            array.each do |rate|
+            @array.each do |rate|
                 if rate < (mean + (3 * standard_deviation))
                     arry_without_outliers.push(rate) 
                 else
