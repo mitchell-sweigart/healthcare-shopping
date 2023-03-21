@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_20_202851) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_21_203824) do
   create_table "clinicians", force: :cascade do |t|
     t.integer "npi"
     t.integer "ind_PAC_ID"
@@ -69,7 +69,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_20_202851) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "negotiated_rates", force: :cascade do |t|
+  create_table "negotiated_rates", id: :bigint, default: nil, force: :cascade do |t|
     t.string "billing_code"
     t.string "billing_code_type"
     t.string "negotiation_arrangement"
