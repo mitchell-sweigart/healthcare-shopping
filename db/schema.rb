@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_21_204804) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_22_205240) do
   create_table "clinicians", force: :cascade do |t|
     t.integer "npi"
-    t.bigint "ind_PAC_ID"
+    t.integer "ind_PAC_ID"
     t.string "last_name"
     t.string "first_name"
     t.string "middle_name"
@@ -28,12 +28,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_21_204804) do
     t.string "secondary_speciality_4"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "organization_id"
   end
 
   create_table "clinicians_facilities", id: false, force: :cascade do |t|
     t.integer "clinician_id", null: false
     t.integer "facility_id", null: false
+  end
+
+  create_table "clinicians_organizations", id: false, force: :cascade do |t|
+    t.integer "organization_id", null: false
+    t.integer "clinician_id", null: false
+    t.integer "[:organization_id, :clinician_id]"
+    t.integer "[:clinician_id, :organization_id]"
   end
 
   create_table "codes", force: :cascade do |t|
@@ -47,11 +53,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_21_204804) do
 
   create_table "facilities", force: :cascade do |t|
     t.string "name"
-    t.string "address_line_one"
-    t.string "address_line_two"
-    t.string "address_city"
-    t.string "address_state"
-    t.string "address_zip_code"
     t.integer "npi"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -59,8 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_21_204804) do
     t.string "facility_id"
     t.string "facility_type"
     t.string "overall_rating"
-    t.float "latitude"
-    t.float "longitude"
+    t.string "organization_dba_name"
   end
 
   create_table "health_plan_networks", force: :cascade do |t|
@@ -69,7 +69,33 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_21_204804) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "negotiated_rates", id: :bigint, default: nil, force: :cascade do |t|
+  create_table "identifiers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "code"
+    t.string "desc"
+    t.string "issuer"
+    t.string "identifier"
+    t.string "state"
+    t.integer "facility_id"
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.string "address_1"
+    t.string "address_2"
+    t.string "city"
+    t.string "state"
+    t.integer "postal_code"
+    t.string "telephone_number"
+    t.string "fax_number"
+    t.integer "facility_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.float "latitude"
+    t.float "longitude"
+  end
+
+  create_table "negotiated_rates", force: :cascade do |t|
     t.string "billing_code"
     t.string "billing_code_type"
     t.string "negotiation_arrangement"
@@ -135,6 +161,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_21_204804) do
     t.integer "code_id"
     t.index ["code_id"], name: "index_services_on_code_id"
     t.index ["facility_id"], name: "index_services_on_facility_id"
+  end
+
+  create_table "taxonomies", force: :cascade do |t|
+    t.string "code"
+    t.string "taxonomy_group"
+    t.string "desc"
+    t.string "state"
+    t.string "license"
+    t.boolean "primary"
+    t.integer "facility_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "timely_and_effective_care_ratings", force: :cascade do |t|

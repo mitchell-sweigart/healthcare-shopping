@@ -1,29 +1,4 @@
-<div class="d-flex flex-row align-items-center justify-content-around">
-  <%= form_with url: import_facilities_path, class: "d-flex", method: :post do |form| %>
-    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
-    <%= form.button "Import", class: "btn btn-outline-success"  %>
-  <% end %>
 
-  <%= form_with url: bulk_import_facilities_path, class: "d-flex", method: :post do |form| %>
-    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
-    <%= form.button "NPI", class: "btn btn-outline-success"  %>
-  <% end %>
-</div>
-
-<div class="d-flex flex-row align-items-center justify-content-around">
-  <%= form_with url: bulk_delete_facilities_path, class: "d-flex", method: :post do |form| %>
-    <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>
-    <%= form.button "Delete", class: "btn btn-outline-danger" %>
-  <% end %>
-
-  <div class="">
-    <%= link_to "Download as CSV", facilities_path(format: :csv), download: ["Facilities", Date.today].join(" "), class: "btn btn-outline-secondary"  %>
-  </div>
-
-  <%= button_to "New Facility", new_facility_path, class:"btn btn-primary", :method => :get  %>
-</div>
-
-<br/>
 <br/>
 <br/>
 
@@ -69,8 +44,8 @@
         <% @facilities.each do |facility| %>
           <tr class="align-middle">
             <th scope="row"><%= facility.id %></th>
-            <td><%= link_to "#{facility.name}", facility_path(facility.id) %></td>
-            <td><%= facility.address_line_one %> <%= facility.address_line_two %>, <%= facility.address_city %> <%= facility.address_state %> <%= facility.address_zip_code %></td>
+            <td><%= link_to facility.consumer_name(), facility_path(facility.id) %></td>
+            <td><%= facility.locations.first.address() if facility.locations.first.present? %></td>
             <td><%= facility.facility_type %></td>
             <td><%= facility.npi %></td>
             <td><%= facility.facility_id %></td>

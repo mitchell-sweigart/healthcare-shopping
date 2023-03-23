@@ -6,7 +6,15 @@ class Facility < ApplicationRecord
     has_many :negotiated_rates
     validates_uniqueness_of :npi
 
-    def address()
-        return self.address_line_one + " " + self.address_city +  " " + self.address_state +  " " + self.address_zip_code
+    has_many :identifiers
+    has_many :locations
+    has_many :taxonomies
+
+    def consumer_name()
+        if self.organization_dba_name.present?
+            return self.organization_dba_name
+        else
+            return self.name
+        end
     end
 end

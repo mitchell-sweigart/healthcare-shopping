@@ -1,87 +1,167 @@
-<h3>Facility</h3>
+<h2><%= @facility.consumer_name().titleize %></h2>
+<p><%= "NPI: #{@facility.npi}" %></p>
+
+<br/>
+<br/>
+
+<h4><%= @locations.length > 1 ? Locations : Location %></h4>
 
 <table class="table">
     <thead class="thead-dark">
         <tr>
-          <th scope="col" id="services-id">
-            <span>ID</span>
-          </th>
-          <th scope="col" id="services-name">
-            <span>Name</span>
-          </th>
           <th scope="col" id="services-name">
             <span>Address</span>
           </th>
+          <th scope="col" id="services-name">
+            <span>Phone Number</span>
+          </th>
           <th scope="col" id="services-cpt-hcpcs">
-            <span>NPI</span>
+            <span>Fax Number</span>
           </th>
           <th scope="col" id="services-gross-charge">
-            <span>PAC ID</span>
+            <span>Latitude</span>
           </th>
-          <th scope="col" id="services-action">
-            <span></span>
+          <th scope="col" id="services-gross-charge">
+            <span>Longitude</span>
           </th>
         </tr>
     </thead>
     <tbody>
-        <tr class="align-middle">
-            <th scope="row"><%= @facility.id %></th>
-            <td><%= @facility.name %></td>
-            <td><%= @facility.address_line_one %> <%= @facility.address_line_two %>, <%= @facility.address_city %> <%= @facility.address_state %> <%= @facility.address_zip_code %></td>
-            <td><%= @facility.npi %></td>
-            <td><%= @facility.org_PAC_ID %></td>
-            <td>
-                <%= button_to "Edit", edit_facility_path(@facility), class: "btn btn-outline-secondary", :method => :get %>
-            </td>
-        </tr>
-    </tbody>
-</table>
-
-<br/>
-<br/>
-
-<h3>Associated Clinicians</h3>
-<p>A list of the Clinicians that are associated/do procedures at this facility</p>
-
-<table class="table">
-    <thead class="thead-dark">
-        <tr>
-          <th scope="col" id="services-id">
-            <span>ID</span>
-          </th>
-          <th scope="col" id="services-name">
-            <span>Name</span>
-          </th>
-          <th scope="col" id="services-name">
-            <span>Specialty</span>
-          </th>
-          <th scope="col" id="services-cpt-hcpcs">
-            <span>Medical School</span>
-          </th>
-          <th scope="col" id="services-gross-charge">
-            <span>Gratuation Year</span>
-          </th>
-          <th scope="col" id="services-action">
-            <span></span>
-          </th>
-        </tr>
-    </thead>
-    <tbody>
-        <% @facility.clinician_ids.each do |clinician_id| %>
-          <% @clinician = Clinician.find(clinician_id) %>
+        <% @locations.each do |location| %>
           <tr class="align-middle">
-            <th scope="row"><%= @clinician.id %></th>
-            <td><%= link_to "#{@clinician.first_name} #{@clinician.middle_name} #{@clinician.last_name} #{@clinician.credential}", clinician_path(@clinician) %></td>
-            <td><%= @clinician.primary_speciality %>
-            <td><%= @clinician.medical_school %></td>
-            <td><%= @clinician.graduation_year %></td>
-            <td>
-                <%= button_to "Edit", edit_clinician_path(@clinician), class: "btn btn-outline-secondary", :method => :get %>
-            </td>
+            <td><%= location.address() %></td>
+            <td><%= location.telephone_number.present? ? location.telephone_number : "N/A" %></td>
+            <td><%= location.fax_number.present? ? location.fax_number : "N/A" %></td>
+            <td><%= location.latitude.present? ? location.latitude : "N/A" %></td>
+            <td><%= location.longitude.present? ? location.longitude : "N/A" %></td>
           </tr>
         <% end %>
     </tbody>
 </table>
+
+<br/>
+<br/>
+<% if @taxonomies.empty? == false %>
+  <h4><%= @taxonomies.length > 1 ? "Specialties & Liscenses" : "Specialty & Liscense" %></h4>
+  <p>Liscenses held by this facility.</p>
+  <table class="table">
+      <thead class="thead-dark">
+          <tr>
+            <th scope="col" id="services-name">
+              <span>Code</span>
+            </th>
+            <th scope="col" id="services-name">
+              <span>Taxonomy Group</span>
+            </th>
+            <th scope="col" id="services-cpt-hcpcs">
+              <span>Description</span>
+            </th>
+            <th scope="col" id="services-gross-charge">
+              <span>State</span>
+            </th>
+            <th scope="col" id="services-gross-charge">
+              <span>License Num.</span>
+            </th>
+            <th scope="col" id="services-gross-charge">
+            <span></span>
+            </th>
+          </tr>
+      </thead>
+      <tbody>
+          <% @taxonomies.each do |taxonomy| %>
+            <tr class="align-middle">
+              <td><%= "#{taxonomy.code}"%></td>
+              <td><%= taxonomy.taxonomy_group.present? ? taxonomy.taxonomy_group : "N/A" %></td>
+              <td><%= taxonomy.desc %></td>
+              <td><%= taxonomy.state.present? ? taxonomy.state : "N/A" %></td>
+              <td><%= taxonomy.license.present? ? taxonomy.license : "N/A" %></td>
+              <td><%= taxonomy.primary == true ? "Primary Specialty" : "" %></td>
+            </tr>
+          <% end %>
+      </tbody>
+  </table>
+<% else %>
+<% end %>
+
+<br/>
+<br/>
+
+<% if @identifiers.empty? == false %>
+  <h4><%= "Medicare Insurance Accepted" %></h4>
+  <p>Medicare and Medicaid Insurance Plans this Facility Accepts</p>
+  <table class="table">
+      <thead class="thead-dark">
+          <tr>
+            <th scope="col" id="services-name">
+              <span>Code</span>
+            </th>
+            <th scope="col" id="services-name">
+              <span>Descripton</span>
+            </th>
+            <th scope="col" id="services-cpt-hcpcs">
+              <span>Issuer</span>
+            </th>
+            <th scope="col" id="services-gross-charge">
+              <span>Identifier</span>
+            </th>
+            <th scope="col" id="services-gross-charge">
+              <span>State</span>
+            </th>
+            <th scope="col" id="services-gross-charge">
+            <span></span>
+            </th>
+          </tr>
+      </thead>
+      <tbody>
+          <% @identifiers.each do |identifier| %>
+            <tr class="align-middle">
+              <td><%= "#{identifier.code}"%></td>
+              <td><%= identifier.desc %></td>
+              <td><%= identifier.issuer.present? ? identifier.issuer : "N/A" %></td>
+              <td><%= identifier.identifier.present? ? identifier.identifier : "N/A" %></td>
+              <td><%= identifier.state.present? ? identifier.state : "N/A" %></td>
+            </tr>
+          <% end %>
+      </tbody>
+  </table>
+<% else %>
+<% end %>
+
+<br/>
+<br/>
+
+<% if @clinicians.empty? == false %>
+  <h4>Associated Clinicians</h4>
+  <p>Clinicians that are associated with this facility</p>
+  <table class="table">
+      <thead class="thead-dark">
+          <tr>
+            <th scope="col" id="services-name">
+              <span>Name</span>
+            </th>
+            <th scope="col" id="services-name">
+              <span>Medical School</span>
+            </th>
+            <th scope="col" id="services-cpt-hcpcs">
+              <span>Graduation Year</span>
+            </th>
+            <th scope="col" id="services-gross-charge">
+              <span>Specialties</span>
+          </tr>
+      </thead>
+      <tbody>
+          <% @clinicians.each do |clinician| %>
+            <tr class="align-middle">
+              <td><%= "#{clinician.proper_name().titleize}"%></td>
+              <td><%= clinician.medical_school.titleize %></td>
+              <td><%= clinician.graduation_year %></td>
+              <td><%= clinician.specialties().titleize %></td>
+            </tr>
+          <% end %>
+      </tbody>
+  </table>
+<% else %>
+<% end %>
 
 <br/>
 
@@ -140,47 +220,6 @@
 <br/>
 <br/>
 
-<h3>Services</h3>
-<p>This data shows each of the 500 shoppable services available at this facility and their associated costs.</p>
-<br/>
-
-<table class="table">
-    <thead class="thead-dark">
-        <tr>
-          <th scope="col" id="services-name">
-            <span>CPT/HCPCS</span>
-          </th>
-          <th scope="col" id="services-name">
-            <span>Description</span>
-          </th>
-          <th scope="col" id="services-cpt-hcpcs">
-            <span>Gross Charge</span>
-          </th>
-          <th scope="col" id="services-gross-charge">
-            <span>Self Pay/Cash Price</span>
-          </th>
-          <th scope="col" id="services-action">
-            <span>CBC Commercial</span>
-          </th>
-        </tr>
-    </thead>
-    <tbody>
-      <% @services.each do |service| %>
-          <tr class="align-middle">
-              <td><%= service.code.code %></td>
-              <td><%= service.code.plain_language_description %></td>
-              <td><%= service.gross_charge %></td>
-              <td><%= service.self_pay_cash_price %></td>
-              <td><%= service.cbc_commercial %></td>
-              <td>
-              <%= button_to "Delete", service_path(service), class: "btn btn-outline-danger", method: :delete %>
-              </td>
-          </tr>
-      <% end %>
-    </tbody>
-</table>
-
-<br/>
 <br/>
 
 <h3>Ratings</h3>

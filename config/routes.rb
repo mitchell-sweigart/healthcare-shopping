@@ -4,16 +4,11 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
 
-  get '/providers', to: 'providers#index', as: "providers_path"
-  get '/providers/new', to: 'providers#new', as: "new_provider_path"
-  post '/providers', to: 'providers#create'
-  get '/providers/:id', to: 'providers#show', as: "provider_path"
-  get '/providers/:id/edit', to: 'providers#edit', as: "edit_provider_path"
-  put '/providers/:id', to: 'providers#update'
-  patch '/providers/:id', to: 'providers#update'
-  delete '/providers/:id', to: 'providers#destroy'
-
-  post '/providers/import', to: 'providers#import'
+  resources :static do
+    collection do
+      get :negotiated_rates_bulk_actions
+    end
+  end
 
   resources :facilities do
     collection do
@@ -58,6 +53,7 @@ Rails.application.routes.draw do
       post :import
       post :bulk_delete
       post :bulk_import
+      get :bulk_actions
     end
   end
 

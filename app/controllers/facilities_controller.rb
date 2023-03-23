@@ -28,6 +28,17 @@ class FacilitiesController < ApplicationController
     def show
 
         @facility = Facility.find(params[:id])
+        @taxonomies = @facility.taxonomies
+        @locations = @facility.locations
+        @identifiers = @facility.identifiers
+        clinician_id_array = []
+        @neogtiated_rates_for_facility = NegotiatedRate.where(tin: @facility.npi)
+        @neogtiated_rates_for_facility.each do |rate|
+            clinician_id_array.push(rate.npi)
+        end
+        clinician_id_array.uniq
+        @clinicians = Clinician.where(npi: clinician_id_array)
+
         @timely_and_effective_care_ratings = Facility.find(params[:id]).timely_and_effective_care_ratings
         @services = Facility.find(params[:id]).services
         @ratings = Facility.find(params[:id]).ratings
