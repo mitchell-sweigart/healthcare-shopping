@@ -61,6 +61,9 @@
   <% end %>
 </div>
 
+<br/>
+<br/>
+
 <div class="d-flex flex-row align-items-center justify-content-between">
   <%= form_with url: bulk_delete_clinicians_path, class: "d-flex", method: :post do |form| %>
     <%= form.file_field :file, accept: ".csv", class: "form-control me-2" %>

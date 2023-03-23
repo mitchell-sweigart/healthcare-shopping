@@ -92,24 +92,28 @@ module HelpfulFunctions
         Clinician.exists?(npi: npi) ? Clinician.update(clinician_hash) : Clinician.create(clinician_hash)
     end
 
-    def get_geolocation_data(npi) #this is wrong
-        facility = Facility.find_by(npi: npi)
-        begin
-            google_maps_api_key = "AIzaSyDSL85vkykDd8e2g7Z5mzd-zJvf779k0dM"
-            street_1 = facility.locations.first.address_1
-            city = facility.locations.first.city
-            state = facility.locations.first.state
-            zip_code = facility.locations.first.postal_code
-            google_maps_api = "https://maps.googleapis.com/maps/api/geocode/json?address=#{street_1},+#{city},+#{state}&key=#{google_maps_api_key}"
-            geo_data_raw = URI.open(google_maps_api).read
-            geo_data_hash = JSON.parse(geo_data_raw)
-            geo_data_hash["results"].each do |hash|
-                facility.latitude = hash["geometry"]["location"]["lat"]
-                facility.longitude = hash["geometry"]["location"]["lng"]
-                facility.save
+    def get_geolocation_data(facility) #this is wrong
+        facility = Facility.find(facility.id)
+        locations = facility.locations
+
+        locations.each do |location|
+            begin
+                google_maps_api_key = "AIzaSyDSL85vkykDd8e2g7Z5mzd-zJvf779k0dM"
+                street_1 = location.address_1
+                city = location.city
+                state = location.state
+                zip_code = location.postal_code
+                google_maps_api = "https://maps.googleapis.com/maps/api/geocode/json?address=#{street_1},+#{city},+#{state}&key=#{google_maps_api_key}"
+                geo_data_raw = URI.open(google_maps_api).read
+                geo_data_hash = JSON.parse(geo_data_raw)
+                geo_data_hash["results"].each do |hash|
+                    location.latitude = hash["geometry"]["location"]["lat"]
+                    location.longitude = hash["geometry"]["location"]["lng"]
+                    location.save
+                end
+            rescue
+                puts "Error Getting Geo Data!"
             end
-        rescue
-            puts "Error Getting Geo Data!"
         end
     end
 end
