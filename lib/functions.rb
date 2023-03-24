@@ -4,6 +4,31 @@ module HelpfulFunctions
     require "json"
     require "open-uri"
 
+    def get_geolocation_data(facility)
+        facility = Facility.find(facility.id)
+        locations = facility.locations
+
+        locations.each do |location|
+            begin
+                google_maps_api_key = "AIzaSyDSL85vkykDd8e2g7Z5mzd-zJvf779k0dM"
+                street_1 = location.address_1
+                city = location.city
+                state = location.state
+                zip_code = location.postal_code
+                google_maps_api = "https://maps.googleapis.com/maps/api/geocode/json?address=#{street_1},+#{city},+#{state}&key=#{google_maps_api_key}"
+                geo_data_raw = URI.open(google_maps_api).read
+                geo_data_hash = JSON.parse(geo_data_raw)
+                geo_data_hash["results"].each do |hash|
+                    location.latitude = hash["geometry"]["location"]["lat"]
+                    location.longitude = hash["geometry"]["location"]["lng"]
+                    location.save
+                end
+            rescue
+                puts "Error Getting Geo Data!"
+            end
+        end
+    end
+
     def create_facility_via_api_call(npi)
         facility_npi_url = "https://npiregistry.cms.hhs.gov/api/?number=#{npi}&enumeration_type=&taxonomy_description=&first_name=&use_first_name_alias=&last_name=&organization_name=&address_purpose=&city=&state=&postal_code=&country_code=&limit=&skip=&pretty=on&version=2.1"
         facility_npi_raw = URI.open(facility_npi_url).read
@@ -39,6 +64,8 @@ module HelpfulFunctions
                 next
             end
         end
+
+        get_geolocation_data(facility)
 
         facility_npi_hash["results"][0]['taxonomies'].each do |taxonomy|
             taxonomy_hash = {}
@@ -93,31 +120,6 @@ module HelpfulFunctions
             Clinician.exists?(npi: npi) ? Clinician.update(clinician_hash) : Clinician.create(clinician_hash)
         rescue
             puts "Error Getting Clinician Data for NPI: #{npi}!"
-        end
-    end
-
-    def get_geolocation_data(facility)
-        facility = Facility.find(facility.id)
-        locations = facility.locations
-
-        locations.each do |location|
-            begin
-                google_maps_api_key = "AIzaSyDSL85vkykDd8e2g7Z5mzd-zJvf779k0dM"
-                street_1 = location.address_1
-                city = location.city
-                state = location.state
-                zip_code = location.postal_code
-                google_maps_api = "https://maps.googleapis.com/maps/api/geocode/json?address=#{street_1},+#{city},+#{state}&key=#{google_maps_api_key}"
-                geo_data_raw = URI.open(google_maps_api).read
-                geo_data_hash = JSON.parse(geo_data_raw)
-                geo_data_hash["results"].each do |hash|
-                    location.latitude = hash["geometry"]["location"]["lat"]
-                    location.longitude = hash["geometry"]["location"]["lng"]
-                    location.save
-                end
-            rescue
-                puts "Error Getting Geo Data!"
-            end
         end
     end
 end
