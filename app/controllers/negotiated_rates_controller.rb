@@ -124,15 +124,15 @@ class NegotiatedRatesController < ApplicationController
                 @array.push(negotiated_rate[:negotiated_rate])
             end
 
-            @mean = @array.sum(0.0) / @array.size
-            sum = @array.sum(0.0) { |element| (element - @mean) ** 2 }
+            mean = @array.sum(0.0) / @array.size
+            sum = @array.sum(0.0) { |element| (element - mean) ** 2 }
             variance = sum / (@array.size - 1)
             @standard_deviation = Math.sqrt(variance)
 
             arry_without_outliers = []
 
             @array.each do |rate|
-                if rate < (@mean + (3 * @standard_deviation))
+                if rate < (mean + (3 * @standard_deviation))
                     arry_without_outliers.push(rate) 
                 else
                     next

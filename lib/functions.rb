@@ -69,27 +69,31 @@ module HelpfulFunctions
     end
 
     def create_clinician_via_api_call(npi)
-        clinician_api_url = "https://data.cms.gov/provider-data/api/1/datastore/sql?query=%5BSELECT%20%2A%20FROM%206fdc4567-4ae7-5d31-8adc-adeb7a629787%5D%5BWHERE%20npi%20%3D%20%22#{npi}%22%5D%5BLIMIT%201%5D"
-        clinician_api_raw = URI.open(clinician_api_url).read
-        clinician_api_hash = JSON.parse(clinician_api_raw)
+        begin
+            clinician_api_url = "https://data.cms.gov/provider-data/api/1/datastore/sql?query=%5BSELECT%20%2A%20FROM%206fdc4567-4ae7-5d31-8adc-adeb7a629787%5D%5BWHERE%20npi%20%3D%20%22#{npi}%22%5D%5BLIMIT%201%5D"
+            clinician_api_raw = URI.open(clinician_api_url).read
+            clinician_api_hash = JSON.parse(clinician_api_raw)
 
-        clinician_hash = {}
-        clinician_hash[:npi] = clinician_api_hash[0]["NPI"]
-        clinician_hash[:ind_PAC_ID] = clinician_api_hash[0]["Ind_PAC_ID"]
-        clinician_hash[:first_name] = clinician_api_hash[0]["frst_nm"]
-        clinician_hash[:middle_name] = clinician_api_hash[0]["mid_nm"]
-        clinician_hash[:last_name] = clinician_api_hash[0]["lst_nm"]
-        clinician_hash[:suffix] = clinician_api_hash[0]["suff"]
-        clinician_hash[:credential] = clinician_api_hash[0]["Cred"]
-        clinician_hash[:medical_school] = clinician_api_hash[0]["Med_sch"]
-        clinician_hash[:graduation_year] = clinician_api_hash[0]["Grd_yr"]
-        clinician_hash[:primary_speciality] = clinician_api_hash[0]["pri_spec"]
-        clinician_hash[:secondary_speciality_1] = clinician_api_hash[0]["sec_spec_1"]
-        clinician_hash[:secondary_speciality_2] = clinician_api_hash[0]["sec_spec_2"]
-        clinician_hash[:secondary_speciality_3] = clinician_api_hash[0]["sec_spec_3"]
-        clinician_hash[:secondary_speciality_4] = clinician_api_hash[0]["sec_spec_4"]
+            clinician_hash = {}
+            clinician_hash[:npi] = clinician_api_hash[0]["NPI"]
+            clinician_hash[:ind_PAC_ID] = clinician_api_hash[0]["Ind_PAC_ID"]
+            clinician_hash[:first_name] = clinician_api_hash[0]["frst_nm"]
+            clinician_hash[:middle_name] = clinician_api_hash[0]["mid_nm"]
+            clinician_hash[:last_name] = clinician_api_hash[0]["lst_nm"]
+            clinician_hash[:suffix] = clinician_api_hash[0]["suff"]
+            clinician_hash[:credential] = clinician_api_hash[0]["Cred"]
+            clinician_hash[:medical_school] = clinician_api_hash[0]["Med_sch"]
+            clinician_hash[:graduation_year] = clinician_api_hash[0]["Grd_yr"]
+            clinician_hash[:primary_speciality] = clinician_api_hash[0]["pri_spec"]
+            clinician_hash[:secondary_speciality_1] = clinician_api_hash[0]["sec_spec_1"]
+            clinician_hash[:secondary_speciality_2] = clinician_api_hash[0]["sec_spec_2"]
+            clinician_hash[:secondary_speciality_3] = clinician_api_hash[0]["sec_spec_3"]
+            clinician_hash[:secondary_speciality_4] = clinician_api_hash[0]["sec_spec_4"]
 
-        Clinician.exists?(npi: npi) ? Clinician.update(clinician_hash) : Clinician.create(clinician_hash)
+            Clinician.exists?(npi: npi) ? Clinician.update(clinician_hash) : Clinician.create(clinician_hash)
+        rescue
+            puts "Error Getting Clinician Data for NPI: #{npi}!"
+        end
     end
 
     def get_geolocation_data(facility)
