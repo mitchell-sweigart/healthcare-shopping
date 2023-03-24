@@ -115,7 +115,7 @@ class NegotiatedRatesController < ApplicationController
             end
 
             nrwd.each do |nr|
-                nr[:reward] = benchmark - nr[:negotiated_rate].negotiated_rate > 0 ? benchmark - nr[:negotiated_rate].negotiated_rate : 0.00
+                nr[:reward] = @benchmark - nr[:negotiated_rate].negotiated_rate > 0 ? @benchmark - nr[:negotiated_rate].negotiated_rate : 0.00
             end
 
         else
