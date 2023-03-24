@@ -1,4 +1,12 @@
-<%= "Median: #{@services_median}" %>
+<div class="d-flex flex-row">
+    <div class="mx-2 px-2"><%= "#{@negotiated_rates_with_distance.nil? ? "" : @negotiated_rates_with_distance.length()} results" %></div>
+    <div class="mx-2 px-2"><%= "Mean: #{number_to_currency(@mean, :unit => "$")}" %></div>
+    <div class="mx-2 px-2"><%= "Median: #{number_to_currency(@services_median, :unit => "$")}" %></div>
+    <div class="mx-2 px-2"><%= "Standard Deviation: #{number_to_currency(@standard_deviation, :unit => "$")}" %></div>
+    <div class="mx-2 px-2"><%= "Highest Value For Calculation: #{number_to_currency(@high_number, :unit => "$")}" %></div>
+    <div class="mx-2 px-2"><%= "Benchmark: #{number_to_currency(@benchmark, :unit => "$")}" %></div>
+</div>
+
 <br/>
 
 <%= form_with url: "/negotiated_rates", class: "row g-3", method: :get do |form| %>

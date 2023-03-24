@@ -3,6 +3,8 @@ class FacilitiesController < ApplicationController
     require "httparty"
     require "json"
     require "open-uri"
+    require "./lib/functions.rb"
+    extend HelpfulFunctions
 
     def index
         @facilities = Facility.where(["name LIKE :name", { :name => "%#{params[:q]}%" }]).order(:name)
@@ -43,24 +45,6 @@ class FacilitiesController < ApplicationController
         @services = Facility.find(params[:id]).services
         @ratings = Facility.find(params[:id]).ratings
         facilityID = @facility.facility_id
-
-        begin
-            google_maps_api_key = "AIzaSyDSL85vkykDd8e2g7Z5mzd-zJvf779k0dM"
-            street_1 = @facility.address_line_one
-            city = @facility.address_city
-            state = @facility.address_state
-            zip_code = @facility.address_zip_code
-            google_maps_api = "https://maps.googleapis.com/maps/api/geocode/json?address=#{street_1},+#{city},+#{state}&key=#{google_maps_api_key}"
-            geo_data_raw = URI.open(google_maps_api).read
-            geo_data_hash = JSON.parse(geo_data_raw)
-            geo_data_hash["results"].each do |hash|
-                @facility.latitude = hash["geometry"]["location"]["lat"]
-                @facility.longitude = hash["geometry"]["location"]["lng"]
-                @facility.save
-            end
-        rescue
-            puts "Error Getting Geo Data!"
-        end
 
         begin
             time_and_effective_url = "https://data.cms.gov/provider-data/api/1/datastore/sql?query=%5BSELECT%20%2A%20FROM%207526d6d9-59a1-554a-b091-696e3da3aa84%5D%5BWHERE%20facility_id%20%3D%20%22#{facilityID}%22%5D&show_db_columns=true"
@@ -207,20 +191,7 @@ class FacilitiesController < ApplicationController
 
         csv.each do |row|
             npi = row["npi"]
-            facility_npi_url = "https://npiregistry.cms.hhs.gov/api/?number=#{npi}&enumeration_type=&taxonomy_description=&first_name=&use_first_name_alias=&last_name=&organization_name=&address_purpose=&city=&state=&postal_code=&country_code=&limit=&skip=&pretty=on&version=2.1"
-            facility_npi_raw = URI.open(facility_npi_url).read
-            facility_npi_hash = JSON.parse(facility_npi_raw)
-
-            facility_npi_hash["results"].each do |facility|
-                facility_hash = {}
-                facility_hash[:name] = facility["basic"]["organization_name"]
-                facility_hash[:address_line_one] = facility['addresses'][0]["address_1"]
-                facility_hash[:address_city] = facility['addresses'][0]["city"]
-                facility_hash[:address_state] = facility['addresses'][0]["state"]
-                facility_hash[:address_zip_code] = facility['addresses'][0]["postal_code"]
-                facility_hash[:npi] = facility["number"]
-                Facility.find_or_create_by!(facility_hash)
-            end
+            HelpfulFunctions.create_facility_via_api_call(npi)
         end
         redirect_to facilities_path, notice: "Facilities Imported!"
     end

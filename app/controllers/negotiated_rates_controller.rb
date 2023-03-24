@@ -100,17 +100,18 @@ class NegotiatedRatesController < ApplicationController
                 end
             end
     
-            mean = arry_without_outliers.sum(0.0) / arry_without_outliers.size
+            @mean = arry_without_outliers.sum(0.0) / arry_without_outliers.size
             sum = arry_without_outliers.sum(0.0) { |element| (element - mean) ** 2 }
             variance = sum / (arry_without_outliers.size - 1)
-            standard_deviation = Math.sqrt(variance)
-            quarter_standard_deviation = standard_deviation / 4
+            @standard_deviation = Math.sqrt(variance)
+            @quarter_standard_deviation = standard_deviation / 4
             @services_median = median(arry_without_outliers)
+            @high_number = arry_without_outliers.sort.last
 
             if arry_without_outliers.length() > 0
-                benchmark = @services_median - quarter_standard_deviation
+                @benchmark = @services_median - @quarter_standard_deviation
             else 
-                benchmark = 0
+                @benchmark = 0
             end
 
             nrwd.each do |nr|
@@ -128,26 +129,26 @@ class NegotiatedRatesController < ApplicationController
             variance = sum / (@array.size - 1)
             @standard_deviation = Math.sqrt(variance)
 
-            @arry_without_outliers = []
+            arry_without_outliers = []
 
             @array.each do |rate|
                 if rate < (@mean + (3 * @standard_deviation))
-                    @arry_without_outliers.push(rate) 
+                    arry_without_outliers.push(rate) 
                 else
                     next
                 end
             end
 
-            @mean = @arry_without_outliers.sum(0.0) / @arry_without_outliers.size
-            sum = @arry_without_outliers.sum(0.0) { |element| (element - @mean) ** 2 }
-            variance = sum / (@arry_without_outliers.size - 1)
+            @mean = arry_without_outliers.sum(0.0) / arry_without_outliers.size
+            sum = arry_without_outliers.sum(0.0) { |element| (element - @mean) ** 2 }
+            variance = sum / (arry_without_outliers.size - 1)
             @standard_deviation = Math.sqrt(variance)
             @quarter_standard_deviation = @standard_deviation / 4
-            @one_eighth_standard_deviation = @standard_deviation / 8
-            @services_median = median(@arry_without_outliers)
+            @services_median = median(arry_without_outliers)
+            @high_number = arry_without_outliers.sort.last
 
-            if @arry_without_outliers.length() > 0
-                @benchmark = @services_median - @one_eighth_standard_deviation
+            if arry_without_outliers.length() > 0
+                @benchmark = @services_median - @quarter_standard_deviation
             else 
                 @benchmark = 0
             end

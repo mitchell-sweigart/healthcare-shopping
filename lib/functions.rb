@@ -92,7 +92,7 @@ module HelpfulFunctions
         Clinician.exists?(npi: npi) ? Clinician.update(clinician_hash) : Clinician.create(clinician_hash)
     end
 
-    def get_geolocation_data(facility) #this is wrong
+    def get_geolocation_data(facility)
         facility = Facility.find(facility.id)
         locations = facility.locations
 
