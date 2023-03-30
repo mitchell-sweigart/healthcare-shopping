@@ -5,6 +5,7 @@ class NegotiatedRatesController < ApplicationController
     require "open-uri"
     require "./lib/functions.rb"
     extend HelpfulFunctions
+    require_relative "../.google_maps_api_key.rb"
 
     def index
         code = params[:query]
@@ -58,7 +59,7 @@ class NegotiatedRatesController < ApplicationController
                 if negotiated_rate.facility.locations.first.latitude != nil
                     facility_lat = negotiated_rate.facility.locations.first.latitude
                     facility_lon = negotiated_rate.facility.locations.first.longitude
-                    google_maps_direction_api = "https://maps.googleapis.com/maps/api/directions/json?origin=#{latitude},#{longitude}&destination=#{facility_lat},#{facility_lon}&key=AIzaSyDSL85vkykDd8e2g7Z5mzd-zJvf779k0dM"
+                    google_maps_direction_api = "https://maps.googleapis.com/maps/api/directions/json?origin=#{latitude},#{longitude}&destination=#{facility_lat},#{facility_lon}&key=#{$google_maps_api_key}}"
                     direction_data_raw = URI.open(google_maps_direction_api).read
                     direction_data_hash = JSON.parse(direction_data_raw)
                     distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
@@ -115,7 +116,7 @@ class NegotiatedRatesController < ApplicationController
             end
 
             nrwd.each do |nr|
-                nr[:reward] = negotiated_rate.reward(@benchmark)
+                nr[:reward] = nr.negotiated_rate.reward(@benchmark)
             end
 
         else
