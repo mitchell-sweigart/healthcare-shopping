@@ -33,7 +33,7 @@ gem "jbuilder"
 gem "geocoder"
 
 # Use Redis adapter to run Action Cable in production
-# gem "redis", "~> 4.0"
+gem "redis", "~> 4.0"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -70,6 +70,7 @@ group :development do
 end
 
 group :production do
+  # Use postgresql as the database for Active Record
   gem 'pg', '~> 1.4', '>= 1.4.6'
 end
 
@@ -79,3 +80,5 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+gem "resque", "~> 2.2"

@@ -1,8 +1,13 @@
+require 'resque/server'
+
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
-  # root "articles#index"
+  root "negotiated_rates#index"
+
+  mount Resque::Server.new, at: '/jobs'
+
 
   resources :static do
     collection do

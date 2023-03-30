@@ -115,7 +115,7 @@ class NegotiatedRatesController < ApplicationController
             end
 
             nrwd.each do |nr|
-                nr[:reward] = @benchmark - nr[:negotiated_rate].negotiated_rate > 0 ? @benchmark - nr[:negotiated_rate].negotiated_rate : 0.00
+                nr[:reward] = negotiated_rate.reward(@benchmark)
             end
 
         else
@@ -154,7 +154,7 @@ class NegotiatedRatesController < ApplicationController
             end
 
             @unique_neogtiated_rates.each do |negotiated_rate|
-                nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: @benchmark - negotiated_rate.negotiated_rate > 0 ? @benchmark - negotiated_rate.negotiated_rate : 0.00})
+                nrwd.push({negotiated_rate: negotiated_rate, distance: nil, reward: negotiated_rate.reward(@benchmark)})
             end
         end
 
@@ -233,71 +233,13 @@ class NegotiatedRatesController < ApplicationController
     end
 
     def import
-
         file = params[:file]
         return redirect_to negotiated_rates_path, notice: "Only CSV Please" unless file.content_type == "text/csv"
-        file_open = File.open(file)
-        csv = CSV.parse(file_open, headers: true, col_sep: ',')
+        file.tempfile.binmode
+        file.tempfile = Base64.encode64(file.tempfile.read)
 
-        csv.each do |row|
-            negotiated_rate_hash = {}
-            negotiated_rate_hash[:billing_code] = row["billing_code"]
-            negotiated_rate_hash[:billing_code_type] = row["billing_code_type"]
-            negotiated_rate_hash[:negotiation_arrangement] = row["negotiation_arrangement"]
-            negotiated_rate_hash[:negotiated_type] = row["negotiated_type"]
-            negotiated_rate_hash[:negotiated_rate] = row["negotiated_rate"]
-            negotiated_rate_hash[:experation_date] = row["experation_date"]
-            negotiated_rate_hash[:billing_class] = row["billing_class"]
-            negotiated_rate_hash[:service_code] = row["service_code"]
-            negotiated_rate_hash[:billing_code_modifier] = row["billing_code_modifier"]
-            negotiated_rate_hash[:tin] = row["tin"]
-            negotiated_rate_hash[:tin_type] = row["tin_type"]
-            negotiated_rate_hash[:npi] = row["npi"]
-            negotiated_rate_hash[:health_plan_id] = row["health_plan_id"].to_i
-
-            code = Code.find_by(code: row["billing_code"])
-            negotiated_rate_hash[:code_id] = code.id
-
-            facility = {}
-            clinician = {}
-
-            if row["billing_class"] == "institutional" && row["tin_type"] == "ein"
-
-                if Facility.exists?(npi: row["npi"])
-                    facility = Facility.find_by(npi: row["npi"])
-                else
-                    NegotiatedRatesController.create_facility_via_api_call(row["npi"])
-                    facility = Facility.find_by(npi: row["npi"])
-                end
-
-            elsif row["billing_class"] == "professional" && row["tin_type"] == "npi"
-
-                if Facility.exists?(npi: row["tin"])
-                    facility = Facility.find_by(npi: row["tin"])
-                else
-                    NegotiatedRatesController.create_facility_via_api_call(row["tin"])
-                    facility = Facility.find_by(npi: row["tin"])
-                end
-
-                if Clinician.exists?(npi: row["npi"])
-                    clinician = Clinician.find_by(npi: row["npi"])
-                else
-                    NegotiatedRatesController.create_clinician_via_api_call(row["npi"])
-                    clinician = Clinician.find_by(npi: row["npi"])
-                end
-            else
-                break
-            end
-
-            if clinician.present? == false #not all NPIs are in the CMS API that we're hitting above and Institutional negotiated rates don't have a clincian association
-                negotiated_rate_hash[:facility_id] = facility.id
-                NegotiatedRate.find_or_create_by(negotiated_rate_hash)
-            else
-                negotiated_rate_hash[:facility_id] = facility.id
-                negotiated_rate_hash[:clinician_id] = clinician.id
-                NegotiatedRate.find_or_create_by(negotiated_rate_hash)
-            end
-        end
+        Resque.enqueue(ImportNegotiatedRatesFromCsvJob, params)  
+        #ImportNegotiatedRatesFromCsvJob.perform_later(params)
         redirect_to negotiated_rates_path, notice: "Negotiated Rates Imported!"
     end
 

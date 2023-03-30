@@ -30,6 +30,7 @@ module HelpfulFunctions
     end
 
     def create_facility_via_api_call(npi)
+        print(npi)
         facility_npi_url = "https://npiregistry.cms.hhs.gov/api/?number=#{npi}&enumeration_type=&taxonomy_description=&first_name=&use_first_name_alias=&last_name=&organization_name=&address_purpose=&city=&state=&postal_code=&country_code=&limit=&skip=&pretty=on&version=2.1"
         facility_npi_raw = URI.open(facility_npi_url).read
         facility_npi_hash = JSON.parse(facility_npi_raw)
