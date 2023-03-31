@@ -82,3 +82,6 @@ group :test do
 end
 
 gem "resque", "~> 2.2"
+
+# Hiding API Keys on Heroku https://medium.com/codex/how-to-hide-an-api-key-in-rails-and-pass-it-to-heroku-28f9bf7edbe7
+gem 'dotenv-rails'
