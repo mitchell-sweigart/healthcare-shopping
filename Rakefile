@@ -5,6 +5,6 @@ require_relative "config/application"
 require "resque"
 require "resque/tasks"
 
-task 'reque:setup' => :environment
+task 'resque:setup' => :environment
 
 Rails.application.load_tasks
