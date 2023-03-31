@@ -36,3 +36,4 @@
 
 #Ignore files that contain API keys
 .google_maps_api_key.rb
+.env

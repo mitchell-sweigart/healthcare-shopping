@@ -5,7 +5,6 @@ class NegotiatedRatesController < ApplicationController
     require "open-uri"
     require "./lib/functions.rb"
     extend HelpfulFunctions
-    require "./.google_maps_api_key.rb"
 
     def index
         code = params[:query]
@@ -51,142 +50,73 @@ class NegotiatedRatesController < ApplicationController
 
         end
 
-        if Rails.env.production?
-            latitude = request.location.latitude
-            longitude = request.location.longitude
-            @unique_neogtiated_rates.each do |negotiated_rate|
-                if negotiated_rate.facility.locations.first.latitude != nil
-                    facility_lat = negotiated_rate.facility.locations.first.latitude
-                    facility_lon = negotiated_rate.facility.locations.first.longitude
-                    google_maps_direction_api = "https://maps.googleapis.com/maps/api/directions/json?origin=#{latitude},#{longitude}&destination=#{facility_lat},#{facility_lon}&key=#{$google_maps_api_key}"
-                    direction_data_raw = URI.open(google_maps_direction_api).read
-                    direction_data_hash = JSON.parse(direction_data_raw)
-                    distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
-                    distance_to_travel_num = distance_to_travel.sub("mi","").to_f
-                    #conditionally push depending on distance
-                    if distance_filter == "1" && distance_to_travel_num <= 45
-                        @array.push(negotiated_rate[:negotiated_rate])
-                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                    elsif distance_filter == "2" && distance_to_travel_num <= 60
-                        @array.push(negotiated_rate[:negotiated_rate])
-                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                    elsif distance_filter == "3"
-                        @array.push(negotiated_rate[:negotiated_rate])
-                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                    elsif distance_filter == "4" && distance_to_travel_num <= 35
-                        @array.push(negotiated_rate[:negotiated_rate])
-                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                    else
-                        next
-                    end
-                else
+        latitude = Rails.env.production? ? request.location.latitude : 40.039398
+        longitude = Rails.env.production? ? request.location.longitude : -76.307083
+
+        @unique_neogtiated_rates.each do |negotiated_rate|
+            if negotiated_rate.facility.locations.first.latitude != nil
+                facility_lat = negotiated_rate.facility.locations.first.latitude
+                facility_lon = negotiated_rate.facility.locations.first.longitude
+                api_key = ENV["google_maps_api_key"]
+                print(api_key)
+                google_maps_direction_api = "https://maps.googleapis.com/maps/api/directions/json?origin=#{latitude},#{longitude}&destination=#{facility_lat},#{facility_lon}&key=#{api_key}"
+                direction_data_raw = URI.open(google_maps_direction_api).read
+                direction_data_hash = JSON.parse(direction_data_raw)
+                distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
+                distance_to_travel_num = distance_to_travel.sub("mi","").to_f
+                #conditionally push depending on distance
+                if distance_filter == "1" && distance_to_travel_num <= 45
                     @array.push(negotiated_rate[:negotiated_rate])
-                    nrwd.push({negotiated_rate: negotiated_rate, distance: nil})
-                end
-            end
-
-            arry_without_outliers = []
-
-            mean = @array.sum(0.0) / @array.size
-            sum = @array.sum(0.0) { |element| (element - mean) ** 2 }
-            variance = sum / (@array.size - 1)
-            standard_deviation = Math.sqrt(variance)
-
-            @array.each do |rate|
-                if rate < (mean + (3 * standard_deviation))
-                    arry_without_outliers.push(rate) 
+                    nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
+                elsif distance_filter == "2" && distance_to_travel_num <= 60
+                    @array.push(negotiated_rate[:negotiated_rate])
+                    nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
+                elsif distance_filter == "3"
+                    @array.push(negotiated_rate[:negotiated_rate])
+                    nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
+                elsif distance_filter == "4" && distance_to_travel_num <= 35
+                    @array.push(negotiated_rate[:negotiated_rate])
+                    nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
                 else
                     next
                 end
+            else
+                @array.push(negotiated_rate[:negotiated_rate])
+                nrwd.push({negotiated_rate: negotiated_rate, distance: nil})
             end
-    
-            @mean = arry_without_outliers.sum(0.0) / arry_without_outliers.size
-            sum = arry_without_outliers.sum(0.0) { |element| (element - mean) ** 2 }
-            variance = sum / (arry_without_outliers.size - 1)
-            @standard_deviation = Math.sqrt(variance)
-            @quarter_standard_deviation = standard_deviation / 4
-            @services_median = median(arry_without_outliers)
-            @high_number = arry_without_outliers.sort.last
+        end
 
-            if arry_without_outliers.length() > 0
-                @benchmark = @services_median - @quarter_standard_deviation
-            else 
-                @benchmark = 0
+        arry_without_outliers = []
+
+        mean = @array.sum(0.0) / @array.size
+        sum = @array.sum(0.0) { |element| (element - mean) ** 2 }
+        variance = sum / (@array.size - 1)
+        standard_deviation = Math.sqrt(variance)
+
+        @array.each do |rate|
+            if rate < (mean + (3 * standard_deviation))
+                arry_without_outliers.push(rate) 
+            else
+                next
             end
+        end
 
-            nrwd.each do |nr|
-                nr[:reward] = nr.negotiated_rate.reward(@benchmark)
-            end
-        else
-            latitude = 40.039398
-            longitude = -76.307083
-            @unique_neogtiated_rates.each do |negotiated_rate|
-                if negotiated_rate.facility.locations.first.latitude != nil
-                    facility_lat = negotiated_rate.facility.locations.first.latitude
-                    facility_lon = negotiated_rate.facility.locations.first.longitude
-                    puts "This is the API Key #{$google_maps_api_key}"
-                    print("This is the API Key #{$google_maps_api_key}")
-                    google_maps_direction_api = "https://maps.googleapis.com/maps/api/directions/json?origin=#{latitude},#{longitude}&destination=#{facility_lat},#{facility_lon}&key=#{$google_maps_api_key}"
-                    direction_data_raw = URI.open(google_maps_direction_api).read
-                    print(direction_data_raw)
-                    direction_data_hash = JSON.parse(direction_data_raw)
-                    print(direction_data_hash)
-                    distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
-                    distance_to_travel_num = distance_to_travel.sub("mi","").to_f
-                    #conditionally push depending on distance
-                    if distance_filter == "1" && distance_to_travel_num <= 45
-                        @array.push(negotiated_rate[:negotiated_rate])
-                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                    elsif distance_filter == "2" && distance_to_travel_num <= 60
-                        @array.push(negotiated_rate[:negotiated_rate])
-                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                    elsif distance_filter == "3"
-                        @array.push(negotiated_rate[:negotiated_rate])
-                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                    elsif distance_filter == "4" && distance_to_travel_num <= 35
-                        @array.push(negotiated_rate[:negotiated_rate])
-                        nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                    else
-                        next
-                    end
-                else
-                    @array.push(negotiated_rate[:negotiated_rate])
-                    nrwd.push({negotiated_rate: negotiated_rate, distance: nil})
-                end
-            end
+        @mean = arry_without_outliers.sum(0.0) / arry_without_outliers.size
+        sum = arry_without_outliers.sum(0.0) { |element| (element - mean) ** 2 }
+        variance = sum / (arry_without_outliers.size - 1)
+        @standard_deviation = Math.sqrt(variance)
+        @quarter_standard_deviation = standard_deviation / 4
+        @services_median = median(arry_without_outliers)
+        @high_number = arry_without_outliers.sort.last
 
-            arry_without_outliers = []
+        if arry_without_outliers.length() > 0
+            @benchmark = @services_median - @quarter_standard_deviation
+        else 
+            @benchmark = 0
+        end
 
-            mean = @array.sum(0.0) / @array.size
-            sum = @array.sum(0.0) { |element| (element - mean) ** 2 }
-            variance = sum / (@array.size - 1)
-            standard_deviation = Math.sqrt(variance)
-
-            @array.each do |rate|
-                if rate < (mean + (3 * standard_deviation))
-                    arry_without_outliers.push(rate) 
-                else
-                    next
-                end
-            end
-    
-            @mean = arry_without_outliers.sum(0.0) / arry_without_outliers.size
-            sum = arry_without_outliers.sum(0.0) { |element| (element - mean) ** 2 }
-            variance = sum / (arry_without_outliers.size - 1)
-            @standard_deviation = Math.sqrt(variance)
-            @quarter_standard_deviation = standard_deviation / 4
-            @services_median = median(arry_without_outliers)
-            @high_number = arry_without_outliers.sort.last
-
-            if arry_without_outliers.length() > 0
-                @benchmark = @services_median - @quarter_standard_deviation
-            else 
-                @benchmark = 0
-            end
-
-            nrwd.each do |nr|
-                nr[:reward] = nr[:negotiated_rate].reward(@benchmark)
-            end
+        nrwd.each do |nr|
+            nr[:reward] = nr[:negotiated_rate].reward(@benchmark)
         end
 
         if sort_order == "1"
