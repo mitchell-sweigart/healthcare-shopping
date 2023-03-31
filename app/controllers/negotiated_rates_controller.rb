@@ -5,7 +5,7 @@ class NegotiatedRatesController < ApplicationController
     require "open-uri"
     require "./lib/functions.rb"
     extend HelpfulFunctions
-    require_relative "../.google_maps_api_key.rb"
+    require_relative "../../.google_maps_api_key.rb"
 
     def index
         code = params[:query]
