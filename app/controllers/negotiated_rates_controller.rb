@@ -200,7 +200,6 @@ class NegotiatedRatesController < ApplicationController
         file.tempfile = Base64.encode64(file.tempfile.read)
 
         Resque.enqueue(ImportNegotiatedRatesFromCsvJob, params)  
-        #ImportNegotiatedRatesFromCsvJob.perform_later(params)
         redirect_to negotiated_rates_path, notice: "Negotiated Rates Imported!"
     end
 

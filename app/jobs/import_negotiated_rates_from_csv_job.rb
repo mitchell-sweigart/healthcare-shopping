@@ -49,7 +49,7 @@ class ImportNegotiatedRatesFromCsvJob
           if Facility.exists?(npi: row["npi"])
               facility = Facility.find_by(npi: row["npi"])
           else
-              NegotiatedRatesController.create_facility_via_api_call(row["npi"])
+              ImportNegotiatedRatesFromCsvJob.create_facility_via_api_call(row["npi"])
               facility = Facility.find_by(npi: row["npi"])
           end
 
@@ -58,14 +58,14 @@ class ImportNegotiatedRatesFromCsvJob
           if Facility.exists?(npi: row["tin"])
               facility = Facility.find_by(npi: row["tin"])
           else
-              NegotiatedRatesController.create_facility_via_api_call(row["tin"])
+              ImportNegotiatedRatesFromCsvJob.create_facility_via_api_call(row["tin"])
               facility = Facility.find_by(npi: row["tin"])
           end
 
           if Clinician.exists?(npi: row["npi"])
               clinician = Clinician.find_by(npi: row["npi"])
           else
-              NegotiatedRatesController.create_clinician_via_api_call(row["npi"])
+              ImportNegotiatedRatesFromCsvJob.create_clinician_via_api_call(row["npi"])
               clinician = Clinician.find_by(npi: row["npi"])
           end
       else
