@@ -5,8 +5,6 @@
     <div class="mx-2 px-2"><%= "Standard Deviation: #{number_to_currency(@standard_deviation, :unit => "$")}" %></div>
     <div class="mx-2 px-2"><%= "Highest Value For Calculation: #{number_to_currency(@high_number, :unit => "$")}" %></div>
     <div class="mx-2 px-2"><%= "Benchmark: #{number_to_currency(@benchmark, :unit => "$")}" %></div>
-    <div class="mx-2 px-2"><%= "Sum: #{number_to_currency(@sum, :unit => "$")}" %></div>
-    <div class="mx-2 px-2"><%= "Size: #{@size}" %></div>
 </div>
 
 <br/>
@@ -26,7 +24,7 @@
     </div>
 
     <div class="col-md-2">
-        <%= form.select :query_3, options_for_select([['Distance: 0 - 35mi', 4], ['Distance: 0 - 45mi', 1], ['Distance: 0 - 60mi', 2], ['Distance: All', 3]]) { |hpn| [ hpn[0], hpn[1] ] }, {:selected => params[:query_3]}, class: "form-select" %>
+        <%= form.select :query_3, options_for_select([['Distance: 0 - 35mi', 1], ['Distance: 0 - 45mi', 2], ['Distance: 0 - 60mi', 3], ['Distance: All', 4]]) { |hpn| [ hpn[0], hpn[1] ] }, {:selected => params[:query_3]}, class: "form-select" %>
     </div>
 
     <div class="col-md-1">

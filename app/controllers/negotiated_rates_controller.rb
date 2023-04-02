@@ -56,32 +56,30 @@ class NegotiatedRatesController < ApplicationController
                 distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
                 distance_to_travel_num = distance_to_travel.sub("mi","").to_f
                 #conditionally push depending on distance
-                if distance_filter == "1" && distance_to_travel_num <= 45
+                if distance_filter == "1" && distance_to_travel_num <= 35
                     nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                elsif distance_filter == "2" && distance_to_travel_num <= 60
+                elsif distance_filter == "2" && distance_to_travel_num <= 45
                     nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                elsif distance_filter == "3"
-                    nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                elsif distance_filter == "4" && distance_to_travel_num <= 35
+                elsif distance_filter == "3" && distance_to_travel_num <= 60
                     nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
                 else
-                    next
+                    nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
                 end
             else
-                nrwd.push({negotiated_rate: negotiated_rate, distance: nil})
+                puts "#Negotiated Rate Facility - #{negotiated_rate.facility.name} - doesn't have lat/long coordinates. Facility ID: #{negotiated_rate.facility.id}"
             end
         end
 
-        @sum = 0
-        @size = nrwd.size
+        sum = 0
+        size = nrwd.size
         nrwd.each do |nr|
-            @sum = @sum + nr[:negotiated_rate].negotiated_rate
+            sum = sum + nr[:negotiated_rate].negotiated_rate
         end
 
         arry_without_outliers = []
 
-        mean = @sum / (@size > 0 ? @size : 1)
-        variance = @sum / (@size - 1)
+        mean = sum / (size > 0 ? size : 1)
+        variance = sum / (size - 1)
         standard_deviation = Math.sqrt(variance)
 
         nrwd.each do |nr|
