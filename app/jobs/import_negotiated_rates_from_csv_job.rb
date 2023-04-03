@@ -72,9 +72,10 @@ class ImportNegotiatedRatesFromCsvJob
           break
       end
 
-      if clinician.present? == false #not all NPIs are in the CMS API that we're hitting above and Institutional negotiated rates don't have a clincian association
-          negotiated_rate_hash[:facility_id] = facility.id
-          NegotiatedRate.find_or_create_by(negotiated_rate_hash)
+      if facility.present? == false #if the API is down and the upload triggers a new facility to be created, create_facility_via_api_call will return w/o throwing an error or creatng the facility. Because of that we need to catch that edge case and skip over it
+      elsif clinician.present? == false #not all NPIs are in the CMS API that we're hitting above and Institutional negotiated rates don't have a clincian association
+            negotiated_rate_hash[:facility_id] = facility.id
+            NegotiatedRate.find_or_create_by(negotiated_rate_hash)
       else
           negotiated_rate_hash[:facility_id] = facility.id
           negotiated_rate_hash[:clinician_id] = clinician.id
