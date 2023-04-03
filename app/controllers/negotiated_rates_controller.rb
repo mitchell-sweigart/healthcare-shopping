@@ -55,6 +55,7 @@ class NegotiatedRatesController < ApplicationController
                 direction_data_hash = JSON.parse(direction_data_raw)
                 distance_to_travel = direction_data_hash["routes"][0]["legs"][0]["distance"]["text"]
                 distance_to_travel_num = distance_to_travel.sub("mi","").to_f
+                puts distance_to_travel_num
                 #conditionally push depending on distance
                 if distance_filter == "1" && distance_to_travel_num <= 35
                     nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
@@ -68,21 +69,17 @@ class NegotiatedRatesController < ApplicationController
                     next
                 end
             else
-                puts "#Negotiated Rate Facility - #{negotiated_rate.facility.name} - doesn't have lat/long coordinates. Facility ID: #{negotiated_rate.facility.id}"
+                puts "Negotiated Rate Facility - #{negotiated_rate.facility.name} - doesn't have lat/long coordinates. Facility ID: #{negotiated_rate.facility.id}"
             end
         end
 
-        @sum_nrwd = 0
         @size_nrwd = nrwd.size
-        nrwd.each do |nr|
-            @sum_nrwd = @sum_nrwd + nr[:negotiated_rate].negotiated_rate
-        end
+        @mean_nrwd = nrwd.sum(0.0) { |nr| nr[:negotiated_rate].negotiated_rate } / (@size_nrwd > 0 ? @size_nrwd : 1)
+        @sum_nrwd = nrwd.sum(0.0) { |nr| (nr[:negotiated_rate].negotiated_rate - @mean_nrwd) ** 2 }
+        variance_nrwd = @sum_nrwd / ((@size_nrwd > 0 ? @size_nrwd : 1) - 1)
+        @standard_deviation_nrwd = Math.sqrt(variance_nrwd)
 
         arry_without_outliers = []
-
-        @mean_nrwd = @sum_nrwd / (@size_nrwd > 0 ? @size_nrwd : 1)
-        variance_nrwd = @sum_nrwd / (@size_nrwd - 1)
-        @standard_deviation_nrwd = Math.sqrt(variance_nrwd)
 
         nrwd.each do |nr|
             rate = nr[:negotiated_rate].negotiated_rate
