@@ -97,7 +97,7 @@ class NegotiatedRatesController < ApplicationController
         sum = arry_without_outliers.sum(0.0) { |element| (element - @mean) ** 2 }
         variance = sum / (arry_without_outliers.size - 1)
         @standard_deviation = Math.sqrt(variance)
-        @quarter_standard_deviation = standard_deviation / 4
+        @quarter_standard_deviation = @standard_deviation / 4
         @services_median = MathFunctions.median(arry_without_outliers)
         @high_number = arry_without_outliers.sort.last
 
