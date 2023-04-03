@@ -72,21 +72,21 @@ class NegotiatedRatesController < ApplicationController
             end
         end
 
-        sum = 0
-        size = nrwd.size
+        sum_nrwd = 0
+        size_nrwd = nrwd.size
         nrwd.each do |nr|
-            sum = sum + nr[:negotiated_rate].negotiated_rate
+            sum_nrwd = sum_nrwd + nr[:negotiated_rate].negotiated_rate
         end
 
         arry_without_outliers = []
 
-        mean = sum / (size > 0 ? size : 1)
-        variance = sum / (size - 1)
-        standard_deviation = Math.sqrt(variance)
+        @mean_nrwd = sum_nrwd / (size_nrwd > 0 ? size_nrwd : 1)
+        variance_nrwd = sum_nrwd / (size_nrwd - 1)
+        @standard_deviation_nrwd = Math.sqrt(variance_nrwd)
 
         nrwd.each do |nr|
             rate = nr[:negotiated_rate].negotiated_rate
-            if rate < (mean + (3 * standard_deviation))
+            if rate < (@mean_nrwd + (3 * @standard_deviation_nrwd))
                 arry_without_outliers.push(rate) 
             else
                 next
