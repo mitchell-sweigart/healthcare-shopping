@@ -6,6 +6,8 @@ class Code < ApplicationRecord
     def concise_description()
         if self.plain_language_description.empty? && self.description.present?
             return self.description
+        elsif self.plain_language_description == "No Plain Language Description"
+            return self.description
         elsif self.plain_language_description.present? && self.plain_language_description != "N/A"
                 return self.plain_language_description
         elsif self.plain_language_description == "No Plain Language Description" || self.plain_language_description == "N/A"
