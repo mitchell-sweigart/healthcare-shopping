@@ -94,7 +94,7 @@ class NegotiatedRatesController < ApplicationController
         end
 
         @mean = arry_without_outliers.sum(0.0) / arry_without_outliers.size
-        sum = arry_without_outliers.sum(0.0) { |element| (element - mean) ** 2 }
+        sum = arry_without_outliers.sum(0.0) { |element| (element - @mean) ** 2 }
         variance = sum / (arry_without_outliers.size - 1)
         @standard_deviation = Math.sqrt(variance)
         @quarter_standard_deviation = standard_deviation / 4
