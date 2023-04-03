@@ -72,8 +72,8 @@ class NegotiatedRatesController < ApplicationController
             end
         end
 
-        sum_nrwd = 0
-        size_nrwd = nrwd.size
+        @sum_nrwd = 0
+        @size_nrwd = nrwd.size
         nrwd.each do |nr|
             sum_nrwd = sum_nrwd + nr[:negotiated_rate].negotiated_rate
         end

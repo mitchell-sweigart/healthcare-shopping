@@ -10,6 +10,8 @@
 <div class="d-flex flex-row">
     <div class="mx-2 px-2"><%= "Mean: #{number_to_currency(@mean_nrwd, :unit => "$")}" %></div>
     <div class="mx-2 px-2"><%= "Standard Deviation: #{number_to_currency(@standard_deviation_nrwd, :unit => "$")}" %></div>
+    <div class="mx-2 px-2"><%= "Sum: #{number_to_currency(@sum_nrwd, :unit => "$")}" %></div>
+    <div class="mx-2 px-2"><%= "Size: #{@size_nrwd}" %></div>
 </div>
 
 <br/>
