@@ -62,8 +62,10 @@ class NegotiatedRatesController < ApplicationController
                     nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
                 elsif distance_filter == "3" && distance_to_travel_num <= 60
                     nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
-                else
+                elsif distance_filter == "4"
                     nrwd.push({negotiated_rate: negotiated_rate, distance: distance_to_travel})
+                else
+                    next
                 end
             else
                 puts "#Negotiated Rate Facility - #{negotiated_rate.facility.name} - doesn't have lat/long coordinates. Facility ID: #{negotiated_rate.facility.id}"
